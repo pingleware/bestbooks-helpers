@@ -1,7 +1,7 @@
 "use strict"
 
-const { ChartOfAccounts } = require("@patrick-ingle/bestbooks-core");
-const core = require("@patrick-ingle/bestbooks-core");
+const { ChartOfAccounts } = require("@pingleware/bestbooks-core");
+const core = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
