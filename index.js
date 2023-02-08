@@ -1,14 +1,32 @@
 "use strict"
 
-const { ChartOfAccounts, Ledger, Journal, Asset, Expense, Liability } = require("@pingleware/bestbooks-core");
-const core = require("@pingleware/bestbooks-core");
+const { ChartOfAccounts, Ledger, Journal, Asset, Expense, Liability, Vendor } = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
-        const coa = new core.ChartOfAccounts();
+        const coa = new ChartOfAccounts();
         await coa.add(name,type).then(function(status){
             return status;
         });
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+async function createNewUser(usertype,usermeta) {
+    try {
+        switch(usertype) {
+            case 'internal':
+                break;
+            case 'vendor':
+                {
+                    var vendor = new Vendor();
+                    return await vendor.add(usermeta);
+                }
+                break;
+            case 'customer':
+                break;
+        }
     } catch(error) {
         console.error(error);
     }
@@ -58,10 +76,34 @@ function addTransaction(name, type, date, description, debit, credit,callback,co
     }
 }
 
+function addTransactionSync(name, type, date, description, debit, credit,company_id=0,office_id=0) {
+    try {
+        var status = [];
+        const coa = new ChartOfAccounts();
+        coa.add(name,type);
+
+        const ledger = new Ledger(name,type);
+
+        var results = [];
+
+        if (debit > 0 && credit == 0) {
+            results[0] = ledger.addDebit(date, description, debit, company_id, office_id);
+        } else if (debit == 0 && credit > 0) {
+            results[0] = ledger.addCredit(date, description, credit, company_id, office_id);
+        } else if (debit > 0 && credit > 0) {
+            results[0] = ledger.addDebit(date, description, debit, company_id, office_id);
+            results[1] = ledger.addCredit(date, description, credit, company_id, office_id)
+        }
+        return results;
+    } catch(error) {
+        console.error(error);
+    }
+}
+
 function editTransaction(id, type, account, date, description, debit, credit) {
     try {
         async() => {
-            const coa = new core.ChartOfAccounts();
+            const coa = new ChartOfAccounts();
             coa.add(account,type);
             const ledger = new Ledger(account, type);
 			ledger.getByID(id);
@@ -806,9 +848,11 @@ FROM accounts  a WHERE a.company_id=1
  */
 module.exports = {
     createAccount,
+    createNewUser,
     addCredit,
     addDebit,
     addTransaction,
+    addTransactionSync,
     editTransaction,
     addJournalTransaction,
     editJournalTransaction,
