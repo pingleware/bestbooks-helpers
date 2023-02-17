@@ -1,6 +1,6 @@
 {
   "name": "@pingleware/bestbooks-helpers",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Helper routines for BestBooks Accounting Application Framework",
   "main": "index.js",
   "scripts": {
@@ -14,9 +14,9 @@
   "author": "PressPage Entertainment Inc <presspage.entertainment@gmail.com>",
   "license": "CC-BY-4.0",
   "bugs": {
-    "url": "https://github.com/pingleware/bestbooks-helpers/issues"
+    "url": "https://support.pingleware.work"
   },
-  "homepage": "https://pingleware.github.io/bestbooks-helpers",
+  "homepage": "https://github.com/pingleware/bestbooks-helpers",
   "private": false,
   "engines": {
     "node": ">=6.0.0"
