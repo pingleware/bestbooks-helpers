@@ -811,6 +811,45 @@ function accruedExpense(expense,payable,txdate,description,amount) {
     }
 }
 
+/**
+ * Dividends Payable
+ * 
+ * See https://www.wallstreetprep.com/knowledge/dividends-payable/
+ * Cash Dividend Declared: Debit -> Retained Earnings (Equity), Credit => Dividends Payable (Liability)
+ * Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asset)
+ */
+function dividendDeclared(txdate,description,amount) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add("Retained Earnings", "Equity");
+		coa.add("Dividends Payable", "Liability");
+
+		var equity_account = new Equity("Retained Earnings");
+		equity_account.increase(txdate, description, amount);
+
+		var payable_account = new Liability("Dividends Payable");
+		payable_account.increase(txdate, description, amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+function dividendPaid(txdate,description,amount) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add("Cash", "Asset");
+		coa.add("Dividends Payable", "Liability");
+
+		var asset_account = new Equity("Cash");
+		asset_account.decrease(txdate, description, amount);
+
+		var payable_account = new Liability("Dividends Payable");
+		payable_account.decrease(txdate, description, amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
 
 /**
  * Cost to Estimate Technological Feasability
@@ -881,5 +920,7 @@ module.exports = {
     badDebt,
     accruedIncome,
     accruedIncomePayment,
-    accruedExpense
+    accruedExpense,
+    dividendDeclared,
+    dividendPaid
 }
