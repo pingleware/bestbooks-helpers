@@ -1,6 +1,6 @@
 "use strict"
 
-const { ChartOfAccounts, Ledger, Journal, Asset, Expense, Liability, Vendor } = require("@pingleware/bestbooks-core");
+const { ChartOfAccounts, Ledger, Journal, Asset, Equity, Expense, Liability, Vendor } = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
@@ -815,7 +815,10 @@ function accruedExpense(expense,payable,txdate,description,amount) {
  * Dividends Payable
  * 
  * See https://www.wallstreetprep.com/knowledge/dividends-payable/
- * Cash Dividend Declared: Debit -> Retained Earnings (Equity), Credit => Dividends Payable (Liability)
+ * Cash Dividend Declared: 
+ *      Debit (decrease) -> Retained Earnings (Equity)
+ *      Credit (increase) => Dividends Payable (Liability)
+ * 
  * Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asset)
  */
 function dividendDeclared(txdate,description,amount) {
@@ -825,7 +828,7 @@ function dividendDeclared(txdate,description,amount) {
 		coa.add("Dividends Payable", "Liability");
 
 		var equity_account = new Equity("Retained Earnings");
-		equity_account.increase(txdate, description, amount);
+		equity_account.decrease(txdate, description, amount);
 
 		var payable_account = new Liability("Dividends Payable");
 		payable_account.increase(txdate, description, amount);
@@ -834,13 +837,23 @@ function dividendDeclared(txdate,description,amount) {
     }
 }
 
+/**
+ * 
+ * @param {*} txdate 
+ * @param {*} description 
+ * @param {*} amount 
+ * 
+ * Cash Dividend Paid: 
+ *      Debit*= (decrease) -> Dividends Payable (liability)
+ *      Credit (decrease) -> Cash (Asset)
+ */
 function dividendPaid(txdate,description,amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Cash", "Asset");
 		coa.add("Dividends Payable", "Liability");
 
-		var asset_account = new Equity("Cash");
+		var asset_account = new Asset("Cash");
 		asset_account.decrease(txdate, description, amount);
 
 		var payable_account = new Liability("Dividends Payable");

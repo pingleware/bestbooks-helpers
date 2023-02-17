@@ -10,4 +10,12 @@ describe("Create Account", function(){
         var now = new Date().toISOString().split('T')[0] + " " + new Date().toISOString().split('T')[1];
         helpers.addTransaction("Cash","Cash",now,"Deposit",5.39,0);
     })
+    it("declare a $10.00 dividend", async function(){
+        var now = new Date().toISOString().split('T')[0] + " " + new Date().toISOString().split('T')[1];
+        helpers.dividendDeclared(now,"Dividend of $10 declared",10.00);
+    })
+    it("pay the previously declared dividend", async function(){
+        var now = new Date().toISOString().split('T')[0] + " " + new Date().toISOString().split('T')[1];
+        helpers.dividendPaid(now,"Paying previously declared dividend",10.00);
+    })
 })
