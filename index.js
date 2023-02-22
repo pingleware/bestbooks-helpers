@@ -879,6 +879,135 @@ function dividendPaid(txdate,description,amount) {
  */
 
 /**
+ * Security Deposit
+ * 
+ * Receive: Cash (Asset) -> Debit (increase)
+ *          Refundable Secuirty Deposit (Liability) -> Credit (Increase)
+ */
+function securityDepositReceived(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Asset");
+        coa.add("Refundable Security Deposit","Liability");
+        var cash = new Asset("Cash");
+        var refundableSecurityDeposit = new Liability("Refundable Security Deposit");
+        cash.increase(txdate,description,amount);
+        refundableSecurityDeposit.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Paid:    Cash (Asset) -> Credit (decrease)
+ *          Security Deposit (Asset) -< Debit (increase) 
+ */
+function securityDepositPaid(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Asset");
+        coa.add("Security Deposit","Asset");
+        var cash = new Asset("Cash");
+        var securityDeposit = new Liability("Security Deposit");
+        cash.decrease(txdate,description,amount);
+        securityDeposit.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Deferred Revenue
+ * 
+ * Since deferred revenues are not considered revenue until they are earned, 
+ * they are not reported on the income statement.  Instead they are reported on the balance sheet 
+ * as a liability. As the income is earned, the liability is decreased and recognized as income.
+ * 
+ * the Cash (Asset account) and the Unearned Revenue (Liability account) are increasing.
+ */
+function deferredRevenue(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Asset");
+        coa.add("Unearned Revenue","Liability");
+
+        var cash = new Asset("Cash");
+        var unernedRevenue = new Liability("Unearned Revenue");
+
+        cash.increase(txdate,description,amount);
+        unernedRevenue.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Recognize Uneaarned Revenue
+ * 
+ * Once the services are performed, the income can be recognized with the following entry:  
+ * This entry is decreasing the liability account and increasing revenue.
+ */
+function recognizeDeferredRevenue(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Unearned Revenue","Liability");
+        coa.add("Revenue","Revenue");
+
+        var unernedRevenue = new Liability("Unearned Revenue");
+        var revenue = new Revenue("Revenue");
+
+        unernedRevenue.decrease(txdate,description,amount);
+        revenue.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Deferred Expense
+ * 
+ * Like deferred revenues, deferred expenses are not reported on the income statement. 
+ * Instead, they are recorded as an asset on the balance sheet until the expenses are incurred. 
+ * As the expenses are incurred the asset is decreased and the expense is recorded on the 
+ * income statement.
+ * 
+ * The (Asset account) is increasing, and Cash (Asset account) is decreasing.
+ */
+function deferredExpense(asset_account,txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add(asset_account,"Assety");
+        coa.add("Cash","Cash");
+
+        var asset = new Asset(asset_account);
+        var cash = new Asset("Cash");
+
+        asset.increase(txdate,description,amount);
+        cash.decrease(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Recognize Deferred Expense
+ * 
+ * Here we are decreasing our (Asset) and increasing our (Expense)
+ */
+function recognizeDeferredExpense(asset_account,expense_accouont,txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add(asset_account,"Asset");
+        coa.add(expense_accouont,"Expense");
+
+        var asset = new Asset(asset_account);
+        var expense = new Expense(expense_accouont);
+
+        asset.decrease(txdate,description,amount);
+        expense.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
  * Debit Accounts: Assets & Expenses
  * From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
  * 
@@ -935,5 +1064,11 @@ module.exports = {
     accruedIncomePayment,
     accruedExpense,
     dividendDeclared,
-    dividendPaid
+    dividendPaid,
+    securityDepositReceived,
+    securityDepositPaid,
+    deferredRevenue,
+    recognizeDeferredRevenue,
+    deferredExpense,
+    recognizeDeferredExpense
 }

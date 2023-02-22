@@ -43,3 +43,9 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - accruedExpense
 - dividendDeclared
 - dividendPaid
+- securityDepositReceived
+- securityDepositPaid
+- deferredRevenue
+- recognizeDeferredRevenue
+- deferredExpense
+- recognizeDeferredExpense
