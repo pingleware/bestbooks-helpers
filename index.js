@@ -1360,6 +1360,7 @@ function bondPremiumInterestPayment(txdate,description,amount,premium) {
 }
 /**
  * Bond Discount with Straight-Line Amortization
+ * See https://www.accountingcoach.com/bonds-payable/explanation/6
  */
 function bondDiscount(txdate,description,amount,discount) {
     try {
@@ -1372,9 +1373,9 @@ function bondDiscount(txdate,description,amount,discount) {
         var bondsPayable = new Liability("Bonds Payable");
         var bondDiscount = new ContraLiability("Bond Premium");
 
-        cash.increase(txdate,description,Number(amount + premium));
+        cash.increase(txdate,description,Number(amount + discount));
         bondsPayable.increase(txdate,description,amount);
-        bondDiscount.increase(txdate,description,premium);
+        bondDiscount.increase(txdate,description,discount);
 
     } catch(error) {
         console.error(error);
