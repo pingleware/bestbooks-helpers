@@ -49,3 +49,17 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - recognizeDeferredRevenue
 - deferredExpense
 - recognizeDeferredExpense
+- prepaidSubscriptions
+- recognizePrepaidSubscription
+- paidInCapitalStock
+- stockDividend
+- cashDividendDeclared
+- cashDividendPayable
+- workingHours
+- payrollPayable
+- accruedInterest
+- interestExpense
+- bondsIssuedWOAccruedInterest
+- bondsIssuedWithAccruedInteres
+- bondPremium
+- bondPremiumInterestPayment

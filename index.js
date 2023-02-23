@@ -1,6 +1,14 @@
 "use strict"
 
-const { ChartOfAccounts, Ledger, Journal, Asset, Equity, Expense, Liability, Vendor } = require("@pingleware/bestbooks-core");
+const { ChartOfAccounts, 
+        Ledger, 
+        Journal, 
+        Asset, 
+        Equity, 
+        Expense, 
+        Liability, 
+        ContraLiability, 
+        Vendor } = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
@@ -1008,6 +1016,371 @@ function recognizeDeferredExpense(asset_account,expense_accouont,txdate,descript
 }
 
 /**
+ * Prepaid Subscriptions 
+ */
+function prepaidSubscriptions(txdate,description,amount) {
+    try {
+        deferredExpense("Prepaid Subscriptions",txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Recognized Prepaid Subscription
+ * 
+ * is an adjusting entry when the prepaid subscription is recognized
+ */
+function recognizePrepaidSubscription(txdate,description,amount) {
+    try {
+        recognizeDeferredExpense("Prepaid Subscriptions","Subscriptions",txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Paid -in Capital Stock ior Contributed Capital
+ * 
+ * @param {string} txdate 
+ * @param {string} description 
+ * @param {number} amount total amount invested
+ * @param {number} shares are the number of share purchases
+ * @param {string} assetClass, default='Common Stock', other choices are 'Preferred Stock', Debt, Commodity, etc.
+ * @param {number} parValue, default=0
+ */
+function paidInCapitalStock(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Cash");
+        coa.add(assetClass,"Equity");
+
+        var cash = new Cash("Cash");
+        cash.increase(txdate,description,amount);
+
+        var equity = new Equity(assetClass);
+
+        if (Number(parValue) > 0) {
+            var excess = Number(amount) - Number(shares * parValue);
+            if (excess > 0) {
+                coa.add(`Additional Paid-In Capital - ${assetClass}`,"Asset");
+                var paidInCapital = new Asset(`Additional Paid-In Capital - ${assetClass}`);
+                paidInCapital.decrease(txdate,description,excess);
+
+                var commonStock = Number(shares * parValue);
+                equity.increase(txdate,description,commonStock);
+            } else {
+                equity.increase(txdate,description,amount);
+            }
+        } else {
+            equity.increase(txdate,description,amount);    
+        }    
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Issuance of Stock Dividend
+ * See https://www.accountingtools.com/articles/stock-dividend-accounting
+ * A business typically issues a stock dividend when it does not have sufficient cash 
+ * to pay out a normal dividend, and so resorts to a "paper" distribution of additional shares 
+ * to shareholders. A stock dividend is never treated as a liability of the issuer, 
+ * since the issuance does not reduce assets. Consequently, this type of dividend cannot 
+ * realistically be considered a distribution of assets to shareholders.
+ * 
+ * Also used for Participating Preferred Stock divident, see https://www.accountingcoach.com/stockholders-equity/explanation/7
+ */
+function stockDividend(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Retained Earnings","Equity");
+        coa.add(assetClass,"Equity");
+
+        var retainedEarnings = new Equity("Retained Earnings");
+        retainedEarnings.decrease(txdate,description,Number(sharesOutstanding * fairMarketValue));
+
+        var equity = new Equity(assetClass);
+
+        if (Number(parValue) > 0) {
+            var commonStock = Number(shares * parValue);
+            var excess = Number(amount) - commonStock;
+            if (excess > 0) {
+                coa.add(`Additional Paid-In Capital - ${assetClass}`,"Asset");
+                var paidInCapital = new Asset(`Additional Paid-In Capital - ${assetClass}`);
+                paidInCapital.decrease(txdate,description,excess);
+
+                equity.increase(txdate,description,commonStock);
+            } else {
+                equity.increase(txdate,description,amount);
+            }
+        } else {
+            equity.increase(txdate,description,amount);
+        }
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/** 
+ * Cash Dividend Declared 
+ * See https://www.accountingtools.com/articles/how-do-i-account-for-cash-dividends.html
+ */
+function cashDividendDeclared(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Retained Earnings","Equity");
+        coa.add("Dividends Payable","Liability");
+
+        var retainedEarnings = new Equity("Retained Earnings");
+        retainedEarnings.decrease(txdate,description,amount);
+
+        var dividendsPayable = new Liability("Dividends Payable");
+        dividendsPayable.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Cash Dividend Payable
+ * See https://www.accountingtools.com/articles/how-do-i-account-for-cash-dividends.html
+ */
+function cashDividendPayable(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Cash");
+        coa.add("Dividends Payable","Liability");
+
+        var dividendsPayable = new Liability("Dividends Payable");
+        dividendsPayable.decrease(txdate,description,amount);
+
+        var cash = new Cash();
+        cash.decrease(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Nonparticipating Preferred Stock Dividend
+ * See https://www.accountingcoach.com/stockholders-equity/explanation/7
+ * 
+ */
+
+/**
+ * Stocks issued other than Cash
+ * See https://www.accountingcoach.com/stockholders-equity/explanation/9
+ * 
+ * An example, when an investors trades real estate for shares, where the real estate is the asset account or
+ * an investor agrees to a UCC claim on real estate for shares, now the UCC claim is the asset
+ * 
+ * assetClass can be "Common Stock", "Preferred Stock", "Debt", "Commodity", "Merger & Acquisitions", "Employee"
+ */
+function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,shares,assetClass="Common Stock",parValue=0) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add(asset_account,"Asset");
+        coa.add(assetClass,"Equity");
+
+        var asset = new Asset(asset_account);
+        asset.increase(txdate,description,amount);
+
+        var equity = new Equity(assetClass);
+
+        if (Number(parValue) > 0) {
+            var stockValue = Number(shares * parValue);
+            var excess = Number(amount) - stockValue;
+            if (excess > 0) {
+                coa.add(`Additional Paid-In Capital - ${assetClass}`,"Asset");
+                var paidInCapital = new Asset(`Additional Paid-In Capital - ${assetClass}`);
+                paidInCapital.decrease(txdate,description,excess);
+
+                equity.increase(txdate,description,commonStock);
+            } else {
+                equity.increase(txdate,description,amount);
+            }
+        } else {
+            equity.increase(txdate,description,amount);
+        }
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Working hours
+ */
+function workingHours(hoursPerWeek) {
+    let hoursPerYear = Number(hoursPerWeek / 52);
+    return {
+        workHoursInYear: hoursPerYear,
+        workHoursInMonth: Number(hoursPerYear / 12)
+    }
+}
+/**
+ * Payroll Payable
+ */
+function payrollPayable(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Cash","Cash");
+        coa.add("Net Payroll Payable","Liability");
+
+        var cash = new Cash();
+        var payroll = new Liability("Net Payroll Payable");
+
+        payroll.increase(txdate,description,amount);
+        cash.decrease(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
+ * Accrued Interest
+ * See https://www.accountingcoach.com/bonds-payable/explanation/2
+ */
+function accruedInterest(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Interest Expense","Expense");
+        coa.add("Interest Payable","Liability");
+
+        var expense = new Expense("Interest Expense");
+        var liability = new Liability("Interest Payable");
+
+        expense.increase(txdate,description,amount);
+        liability.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Interest Expense
+ */
+function interestExpense(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Interest Expense","Expense");
+        coa.add("Cash","Cash");
+
+        var cash = new Cash();
+        var expense = new Expense("Interest Expense");
+
+        expense.increase(txdate,description,amount);
+        cash.decrease(txdate,description,amount);
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Bonds Issued at Par with No Accrued Interest
+ */
+function bondsIssuedWOAccruedInterest(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Bonds Payable","Liability");
+        coa.add("Cash","Cash");
+
+        var cash = new Cash();
+        var liability = new Liability("Bonds Payable");
+
+        cash.increase(txdate,description,amount);
+        liability.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Bonds Issued at Par with Accrued Interest
+ */
+function bondsIssuedWithAccruedInteres(txdate,description,amount,interest) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Bonds Payable","Liability");
+        coa.add("Interest Payable","Liability");
+        coa.add("Cash","Cash");
+
+        var cash = new Cash();
+        var bondsPayable = new Liability("Bonds Payable");
+        var interestPayable = new Liability("Interest Payable");
+
+        cash.increase(txdate,description,Number(amount + interest));
+        bondsPayable.increase(txdate,description,amount);
+        interestPayable.incresse(txdate,description,interest);
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Bond Premium with Straight-Line Amortization
+ */
+function bondPremium(txdate,description,amount,premium) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Bonds Payable","Liability");
+        coa.add("Bond Premium","Liability");
+        coa.add("Cash","Cash");
+
+        var cash  = new Cash();
+        var bondsPayable = new Liability("Bonds Payable");
+        var bondPremium = new Liability("Bond Premium");
+
+        cash.increase(txdate,description,Number(amount + premium));
+        bondsPayable.increase(txdate,description,amount);
+        bondPremium.increase(txdate,description,premium);
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Bond Premium Interest Payment
+ */
+function bondPremiumInterestPayment(txdate,description,amount,premium) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Interest Expense","Expense");
+        coa.add("Bond Premium","Liability");
+        coa.add("Interest Payable","Liability");
+
+        var interestPayable = new Liability("Interest Payable");
+        var expense = new Expense("Interest Expense");
+        var liability = new Liability("Bond Premium");
+
+        expense.increase(txdate,description,amount);
+        liability.decrease(txdate,description,premium);
+        interestPayable.increase(txdate,description,Number(amount + premium));
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Bond Discount with Straight-Line Amortization
+ */
+function bondDiscount(txdate,description,amount,discount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Bonds Payable","Liability");
+        coa.add("Bond Discount","ContraLiability");
+        coa.add("Cash","Cash");
+
+        var cash  = new Cash();
+        var bondsPayable = new Liability("Bonds Payable");
+        var bondDiscount = new ContraLiability("Bond Premium");
+
+        cash.increase(txdate,description,Number(amount + premium));
+        bondsPayable.increase(txdate,description,amount);
+        bondDiscount.increase(txdate,description,premium);
+
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
  * Debit Accounts: Assets & Expenses
  * From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
  * 
@@ -1070,5 +1443,21 @@ module.exports = {
     deferredRevenue,
     recognizeDeferredRevenue,
     deferredExpense,
-    recognizeDeferredExpense
+    recognizeDeferredExpense,
+    prepaidSubscriptions,
+    recognizePrepaidSubscription,
+    paidInCapitalStock,
+    stockDividend,
+    cashDividendDeclared,
+    cashDividendPayable,
+    stocksIssuedOtherThanCash,
+    workingHours,
+    payrollPayable,
+    accruedInterest,
+    interestExpense,
+    bondsIssuedWOAccruedInterest,
+    bondsIssuedWithAccruedInteres,
+    bondPremium,
+    bondPremiumInterestPayment,
+    bondDiscount
 }
