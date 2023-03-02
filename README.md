@@ -1,10 +1,16 @@
-# BestBooks Accounting Application Framework - Helpers
+# BestBooks Accounting Application Framework - HELPERS
 
 The helper functions (aka hooks under WordPress) provide simpler interaction with the framework
 
 # Dependency
 
     @pingleware/bestbooks-core
+
+## Dependents
+
+    @pingleware/bestbooks-export
+
+    @pingleware/bestbooks-import
 
 # Helper Methods
 
@@ -63,3 +69,5 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - bondsIssuedWithAccruedInteres
 - bondPremium
 - bondPremiumInterestPayment
+- inventoryPurchase
+- initializeEquity

@@ -25,6 +25,9 @@ async function createNewUser(usertype,usermeta) {
     try {
         switch(usertype) {
             case 'internal':
+                {
+
+                }
                 break;
             case 'vendor':
                 {
@@ -33,6 +36,9 @@ async function createNewUser(usertype,usermeta) {
                 }
                 break;
             case 'customer':
+                {
+
+                }
                 break;
         }
     } catch(error) {
@@ -50,6 +56,15 @@ async function addDebit(account, date, description, amount, company_id=0, office
     await account.addDebit(date,description,amount,company_id,office_id).then(function(status){
         return status;
     });
+}
+
+function getTransactions(account, type, begin_date, end_date) {
+    try {
+        var ledger = new Ledger(account, type);
+        return ledger.get_transactions_by_range(begin_date,end_date);
+    } catch(error) {
+        console.error(error);
+    }
 }
 
 function addTransaction(name, type, date, description, debit, credit,callback,company_id=0,office_id=0) {
@@ -264,7 +279,7 @@ function isJournalInbalance() {
  * 
  * Credit Owner’s Equity|Capital (increases its balance)
  */
-
+ 
 function investment(txdate, description, amount, equity='Owners Equity') {
     try {
 		var coa = new ChartOfAccounts();
@@ -880,8 +895,8 @@ function dividendPaid(txdate,description,amount) {
  * to be sold, leased, or otherwise marketed are research and development costs. 
  * Those costs shall be charged to expense when incurred as required by Subtopic
  * 
- * For purposes of this Subtopic, the technological feasibility of a computer software product is established when the entity has completed all planning, designing, 
- * activities that are necessary to establish that the product can be produced to meet its design specifications including functions, features, 
+ * For purposes of this Subtopic, the technological feasibility of a computer software product is established when the entity has completed all planning, 
+ * designing, activities that are necessary to establish that the product can be produced to meet its design specifications including functions, features, 
  * and technical performance requirements. At a minimum, the entity shall have performed the activities in either (a) or (b) as evidence that
  * technological feasibility has been established: 
  */
@@ -982,7 +997,7 @@ function recognizeDeferredRevenue(txdate,description,amount) {
 function deferredExpense(asset_account,txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
-        coa.add(asset_account,"Assety");
+        coa.add(asset_account,"Asset");
         coa.add("Cash","Cash");
 
         var asset = new Asset(asset_account);
@@ -1066,8 +1081,8 @@ function paidInCapitalStock(txdate,description,amount,shares,assetClass="Common 
                 var paidInCapital = new Asset(`Additional Paid-In Capital - ${assetClass}`);
                 paidInCapital.decrease(txdate,description,excess);
 
-                var commonStock = Number(shares * parValue);
-                equity.increase(txdate,description,commonStock);
+                var sharesValue = Number(shares * parValue);
+                equity.increase(txdate,description,sharesValue);
             } else {
                 equity.increase(txdate,description,amount);
             }
@@ -1102,14 +1117,14 @@ function stockDividend(txdate,description,amount,shares,assetClass="Common Stock
         var equity = new Equity(assetClass);
 
         if (Number(parValue) > 0) {
-            var commonStock = Number(shares * parValue);
-            var excess = Number(amount) - commonStock;
+            var sharesValue = Number(shares * parValue);
+            var excess = Number(amount) - sharesValue;
             if (excess > 0) {
                 coa.add(`Additional Paid-In Capital - ${assetClass}`,"Asset");
                 var paidInCapital = new Asset(`Additional Paid-In Capital - ${assetClass}`);
                 paidInCapital.decrease(txdate,description,excess);
 
-                equity.increase(txdate,description,commonStock);
+                equity.increase(txdate,description,sharesValue);
             } else {
                 equity.increase(txdate,description,amount);
             }
@@ -1174,6 +1189,8 @@ function cashDividendPayable(txdate,description,amount) {
  * An example, when an investors trades real estate for shares, where the real estate is the asset account or
  * an investor agrees to a UCC claim on real estate for shares, now the UCC claim is the asset
  * 
+ * asset_account can be "Real Estate", "UCC Claim", etc.
+ * 
  * assetClass can be "Common Stock", "Preferred Stock", "Debt", "Commodity", "Merger & Acquisitions", "Employee"
  */
 function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,shares,assetClass="Common Stock",parValue=0) {
@@ -1211,10 +1228,10 @@ function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,share
  * Working hours
  */
 function workingHours(hoursPerWeek) {
-    let hoursPerYear = Number(hoursPerWeek / 52);
+    let hoursPerYear = Math.round(Number(hoursPerWeek / 52));
     return {
         workHoursInYear: hoursPerYear,
-        workHoursInMonth: Number(hoursPerYear / 12)
+        workHoursInMonth: Math.round(Number(hoursPerYear / 12))
     }
 }
 /**
@@ -1381,6 +1398,33 @@ function bondDiscount(txdate,description,amount,discount) {
         console.error(error);
     }
 }
+
+/**
+ * Inventory Purchase
+ */
+function inventoryPurchase(txdate,description,amount,inventory="Inventory") {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Accounts Payable","Liability");
+        coa.add(inventory,"Asset");
+
+        var accountsPayable = new Liability("Accounts Payable");
+        var inventory = new Asset(inventory);
+
+        inventory.increase(txdate,description,amount);
+        accountsPayable.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+function initializeEquity() {
+    var coa = new ChartOfAccounts();
+    coa.add('Common Shares Par Value','Equity');
+    coa.add('Additional Paid-in Capital','Equity');
+    coa.add('Retained Earnings','Equity');
+    coa.add('Treasury Shares','Equity');
+}
+
 /**
  * Debit Accounts: Assets & Expenses
  * From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
@@ -1406,6 +1450,7 @@ module.exports = {
     createNewUser,
     addCredit,
     addDebit,
+    getTransactions,
     addTransaction,
     addTransactionSync,
     editTransaction,
@@ -1460,5 +1505,7 @@ module.exports = {
     bondsIssuedWithAccruedInteres,
     bondPremium,
     bondPremiumInterestPayment,
-    bondDiscount
+    bondDiscount,
+    inventoryPurchase,
+    initializeEquity
 }
