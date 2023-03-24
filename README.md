@@ -39,6 +39,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - cashPayment
 - salesCash
 - salesCard
+- salesViaPaypal
 - accountsReceivablePayment
 - distribution
 - COGS

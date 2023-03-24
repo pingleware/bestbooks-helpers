@@ -1426,6 +1426,39 @@ function initializeEquity() {
 }
 
 /**
+ * Receive sales using paypal, with optional specific account.
+ * 
+ * For example,
+ *      You made a sale from a specific website, like a cottage food website, and need to keep
+ *      track of the total sales does not exceed a maximum as defined by state laws. So sales are
+ *      recorded in the separate revenue account
+ * 
+ * @param {TIMESTAMP} txdate
+ * @param {string} description
+ * @param {number} amount
+ * @param {string} account
+ */
+function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Revenue");
+		coa.add("Paypal", "Bank");
+        coa.add("Bank Fee", "Expense");
+
+		var sales = new Revenue(account);
+		sales.increase(txdate, description, Number(amount + fee));
+
+		var ar = new Asset("Paypal");
+		ar.increase(txdate, description, amount);
+
+        var fees = new Expense("Bank Fee");
+        fees.increase(txdate,`Paypal fee for: ${description}`,fee);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
  * Debit Accounts: Assets & Expenses
  * From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
  * 
@@ -1474,6 +1507,7 @@ module.exports = {
     cashPayment,
     salesCash,
     salesCard,
+    salesViaPaypal,
     accountsReceivablePayment,
     distribution,
     COGS,
