@@ -1417,6 +1417,52 @@ function inventoryPurchase(txdate,description,amount,inventory="Inventory") {
         console.error(error);
     }
 }
+/**
+ * Inventory Shrinkage
+ * See https://yourbusiness.azcentral.com/accounting-treatment-restaurant-spoilage-27516.html
+ * 
+ * In a cootage food kitchen, which may be licensed as a home-based food manufacturer, inventory shrinkage through expired or
+ * spoilage is inevitable.
+ * 
+ * The reason for Inventory shrinkage is the general term for lost, stolen, damaged, spoiled, or expired inventory should be provided in
+ * the description
+ * 
+ * Use this helper when you discover actual losses, debit your reserve account and credit inventory by the loss amount.
+ */
+function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_asset="Shrinkage Reserve") {
+    var coa = new ChartOfAccounts();
+    coa.add(contra_asset,AccountTypes.ContraAsset);
+    coa.add(asset,AccountTypes.Asset);
+
+    var contraAssetAccount = new ContraAsset(contra_asset);
+    contraAssetAccount.increase(txdate,description,amount);
+
+    var assetAccount = new Asset(asset);
+    assetAccount.decrease(txdate,description,amount);
+}
+/**
+ * Shrinkage Reserve
+ * 
+ * Generally accepted accounting principles require you to match expenses to the periods in which they occur. 
+ * For this reason, companies might establish special reserve accounts for shrinkage losses. 
+ * You first must estimate your shrinkage loss at the beginning of the period. 
+ * Credit a contra-asset account with a name like “allowance for inventory losses” or “shrinkage reserve” for your estimated loss, 
+ * and debit an expense account or COGS for the same amount. 
+ * When you discover actual losses, debit your reserve account and credit inventory by the loss amount.
+ * 
+ * ONLY use the COGS if inventory loss is small, otherwise use an Inventory expense
+ */
+function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",contra_asset="Shrinkage Reserve") {
+    var coa = new ChartOfAccounts();
+    coa.add(contra_asset,AccountTypes.ContraAsset);
+    coa.add(expense,AccountTypes.Expense);
+
+    var contraAssetAccount = new ContraAsset(contra_asset);
+    contraAssetAccount.decrease(txdate,description,amount);
+
+    var expenseAccount = new Expense(expense);
+    expenseAccount.increase(txdate,description,amount);
+}
 function initializeEquity() {
     var coa = new ChartOfAccounts();
     coa.add('Common Shares Par Value','Equity');
@@ -1541,5 +1587,7 @@ module.exports = {
     bondPremiumInterestPayment,
     bondDiscount,
     inventoryPurchase,
+    inventoryShrinkage,
+    inventoryShrinkageReserve,
     initializeEquity
 }

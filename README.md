@@ -71,4 +71,6 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - bondPremium
 - bondPremiumInterestPayment
 - inventoryPurchase
+- inventoryShrinkage
+- inventoryShrinkageReserve
 - initializeEquity
