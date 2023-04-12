@@ -4,11 +4,14 @@ const { ChartOfAccounts,
         Ledger, 
         Journal, 
         Asset, 
+        Cash,
         Equity, 
         Expense, 
+        Revenue,
         Liability, 
         ContraLiability, 
-        Vendor } = require("@pingleware/bestbooks-core");
+        Vendor, 
+        Inventory} = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
@@ -1400,19 +1403,82 @@ function bondDiscount(txdate,description,amount,discount) {
 }
 
 /**
+ * Raw Material Inventory
+ */
+async function inventoryRawMaterials(txdate,description,amount) {
+    try {
+        await inventoryPurchase(txdate,description,amount,"Raw Materials");
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Work-in-process (WIP) Inventory
+ */
+function inventoryWIP(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Work-in-Process","Inventory");
+
+        var rawMaterials = new Inventory("Raw Materials")
+        var wip = new Inventory("Work-in-Process");
+
+        wip.increase(txdate,description,amount);
+        rawMaterials.decrease(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Finished Goods Inventory
+ */
+function inventoryFinishedGoods(txdate,description,amount) {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("Finished Goods","Inventory");
+
+        var finishedGoods = new Inventory("Finished Goods");
+        var wip = new Inventory("Work-in-Process");
+
+        finishedGoods.increase(txdate,description,amount);
+        wip.decrease(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+/**
  * Inventory Purchase
  */
-function inventoryPurchase(txdate,description,amount,inventory="Inventory") {
+function inventoryPurchase(txdate,description,amount,inventory="Raw Materials") {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Accounts Payable","Liability");
-        coa.add(inventory,"Asset");
+        coa.add(inventory,"Inventory");
 
         var accountsPayable = new Liability("Accounts Payable");
         var inventory = new Asset(inventory);
 
         inventory.increase(txdate,description,amount);
         accountsPayable.increase(txdate,description,amount);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * Inventory Sold
+ */
+function inventorySold(txdate,description,amount,inventory="Finished Goods") {
+    try {
+        var coa = new ChartOfAccounts();
+        coa.add("COGS","Expense");
+        coa.add(inventory,"Inventory");
+
+        var cogs = new Expense("COGS");
+        var inventoryAccount = new Inventory(inventory);
+
+        cogs.increase(txdate,description,amount);
+        inventoryAccount.decrease(txdate,description,amount);
     } catch(error) {
         console.error(error);
     }
@@ -1587,7 +1653,11 @@ module.exports = {
     bondPremiumInterestPayment,
     bondDiscount,
     inventoryPurchase,
+    inventorySold,
     inventoryShrinkage,
     inventoryShrinkageReserve,
-    initializeEquity
+    initializeEquity,
+    inventoryRawMaterials,
+    inventoryWIP,
+    inventoryFinishedGoods
 }
