@@ -11,7 +11,8 @@ const { ChartOfAccounts,
         Liability, 
         ContraLiability, 
         Vendor, 
-        Inventory} = require("@pingleware/bestbooks-core");
+        Inventory,
+        Model} = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
@@ -41,6 +42,32 @@ async function createNewUser(usertype,usermeta) {
             case 'customer':
                 {
 
+                }
+                break;
+        }
+    } catch(error) {
+        console.error(error);
+    }
+}
+
+async function getUsersByType(userType) {
+    try {
+        const model = new Model();
+
+        switch(userType) {
+            case 'internal':
+                {
+                    return await model.querySync(`SELECT * FROM users;`);
+                }
+                break;
+            case 'vendor':
+                {
+                    return await model.querySync(`SELECT * FROM vendor ORDER BY name ASC;`);
+                }
+                break;
+            case 'customer':
+                {
+                    return await model.querySync(`SELECT * FROM customer ORDER BY name ASC;`);
                 }
                 break;
         }
@@ -1593,6 +1620,7 @@ FROM accounts  a WHERE a.company_id=1
 module.exports = {
     createAccount,
     createNewUser,
+    getUsersByType,
     addCredit,
     addDebit,
     getTransactions,

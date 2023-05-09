@@ -78,3 +78,4 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 - inventoryRawMaterials
 - inventoryWIP
 - inventoryFinishedGoods
+- getUsersByType
