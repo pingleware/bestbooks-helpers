@@ -17,7 +17,7 @@ const { ChartOfAccounts,
 async function createAccount(name,type) {
     try {
         const coa = new ChartOfAccounts();
-        await coa.add(name,type).then(function(status){
+        await coa.add(name,type).then(async function(status){
             return status;
         });
     } catch(error) {
@@ -77,27 +77,27 @@ async function getUsersByType(userType) {
 }
 
 async function addCredit(account, date, description, amount, company_id=0, office_id=0) {
-    await account.addCredit(date,description,amount,company_id,office_id).then(function(status){
+    await account.addCredit(date,description,amount,company_id,office_id).then(async function(status){
         return status;
     });
 }
 
 async function addDebit(account, date, description, amount, company_id=0, office_id=0) {
-    await account.addDebit(date,description,amount,company_id,office_id).then(function(status){
+    await account.addDebit(date,description,amount,company_id,office_id).then(async function(status){
         return status;
     });
 }
 
-function getTransactions(account, type, begin_date, end_date) {
+async function getTransactions(account, type, begin_date, end_date) {
     try {
         var ledger = new Ledger(account, type);
-        return ledger.get_transactions_by_range(begin_date,end_date);
+        return ledger.getTransactionsByRange(begin_date,end_date);
     } catch(error) {
         console.error(error);
     }
 }
 
-function addTransaction(name, type, date, description, debit, credit,callback,company_id=0,office_id=0) {
+async function addTransaction(name, type, date, description, debit, credit,callback,company_id=0,office_id=0) {
     try {
         var status = [];
         const coa = new ChartOfAccounts();
@@ -106,19 +106,19 @@ function addTransaction(name, type, date, description, debit, credit,callback,co
         const ledger = new Ledger(name,type);
 
         if (debit > 0 && credit == 0) {
-            ledger.addDebit(date, description, debit, company_id, office_id).then(function(_status){
+            ledger.addDebit(date, description, debit, company_id, office_id).then(async function(_status){
                 status.push(_status);
                 callback(status);
             });
         } else if (debit == 0 && credit > 0) {
-            ledger.addCredit(date, description, credit, company_id, office_id).then(function(_status){
+            ledger.addCredit(date, description, credit, company_id, office_id).then(async function(_status){
                 status.push(_status);
                 callback(status);
             });
         } else if (debit > 0 && credit > 0) {
-            ledger.addDebit(date, description, debit, company_id, office_id).then(function(_status){
+            ledger.addDebit(date, description, debit, company_id, office_id).then(async function(_status){
                 status.push(_status);
-                ledger.addCredit(date, description, credit, company_id, office_id).then(function(_status){
+                ledger.addCredit(date, description, credit, company_id, office_id).then(async function(_status){
                     status.push(_status);
                     callback(status);
                 });
@@ -129,7 +129,7 @@ function addTransaction(name, type, date, description, debit, credit,callback,co
     }
 }
 
-function addTransactionSync(name, type, date, description, debit, credit,company_id=0,office_id=0) {
+async function addTransactionSync(name, type, date, description, debit, credit,company_id=0,office_id=0) {
     try {
         var status = [];
         const coa = new ChartOfAccounts();
@@ -153,7 +153,7 @@ function addTransactionSync(name, type, date, description, debit, credit,company
     }
 }
 
-function editTransaction(id, type, account, date, description, debit, credit) {
+async function editTransaction(id, type, account, date, description, debit, credit) {
     try {
         async() => {
             const coa = new ChartOfAccounts();
@@ -167,7 +167,7 @@ function editTransaction(id, type, account, date, description, debit, credit) {
     }
 }
 
-function addJournalTransaction(account, date, reference, debit, credit, company_id=0, office_id=0) {
+async function addJournalTransaction(account, date, reference, debit, credit, company_id=0, office_id=0) {
     try {
         var journal = new  Journal(account);
         journal.add(date,reference,account,debit,credit,company_id,office_id);
@@ -176,7 +176,7 @@ function addJournalTransaction(account, date, reference, debit, credit, company_
     }
 }
 
-function editJournalTransaction(id, account, date, reference, debit, credit) {
+async function editJournalTransaction(id, account, date, reference, debit, credit) {
     try {
         var journal = new Journal(account);
         journal.update(id,date,account,debit,credit,reference);
@@ -185,7 +185,7 @@ function editJournalTransaction(id, account, date, reference, debit, credit) {
     }
 }
 
-function asset(account, txdate, description, amount) {
+async function asset(account, txdate, description, amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(account,'Asset');
@@ -201,7 +201,7 @@ function asset(account, txdate, description, amount) {
     }
 }
 
-function expense(account, txdate, description, amount) {
+async function expense(account, txdate, description, amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(account,'Expense');
@@ -239,7 +239,7 @@ function expense(account, txdate, description, amount) {
  * [Remember: A debit adds a positive number and a credit adds a negative number. But you 
  * NEVER put a minus sign on a number you enter into the accounting software.] 
  */
-function liability(account, txdate, description, amount) {
+async function liability(account, txdate, description, amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(account,'Liability');
@@ -255,7 +255,7 @@ function liability(account, txdate, description, amount) {
     }
 }
 
-function equity(account, txdate, description, amount) {
+async function equity(account, txdate, description, amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add($account, "Equity");
@@ -271,7 +271,7 @@ function equity(account, txdate, description, amount) {
     }
 }
 
-function revenue(account, txdate, description, amount) {
+async function revenue(account, txdate, description, amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add($account, "Revenue");
@@ -287,7 +287,7 @@ function revenue(account, txdate, description, amount) {
     }
 }
 
-function isJournalInbalance() {
+async function isJournalInbalance() {
     try {
         var journal = new Journal();
 		return journal.inBalance();
@@ -310,7 +310,7 @@ function isJournalInbalance() {
  * Credit Owner’s Equity|Capital (increases its balance)
  */
  
-function investment(txdate, description, amount, equity='Owners Equity') {
+async function investment(txdate, description, amount, equity='Owners Equity') {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -341,7 +341,7 @@ function investment(txdate, description, amount, equity='Owners Equity') {
  * 
  * Credit Loans Payable (increases its balance)
  */
-function encumber(txdate, description, amount) {
+async function encumber(txdate, description, amount) {
     var coa = new ChartOfAccounts();
     coa.add('Cash', 'Cash');
     coa.add('Loans Payable', 'Liability');
@@ -366,7 +366,7 @@ function encumber(txdate, description, amount) {
  *
  * Credit Cash (decreases its balance)
  */
-function bankfee(txdate, description, amount) {
+async function bankfee(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -400,7 +400,7 @@ function bankfee(txdate, description, amount) {
  *
  * Credit Cash $540 (decreases its balance)
  */
-function loanPayment(txdate, description, amount, interest) {
+async function loanPayment(txdate, description, amount, interest) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -438,7 +438,7 @@ function loanPayment(txdate, description, amount, interest) {
  * [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a 
  * minus sign on a number you enter into the accounting software.] 
  */
-function payAssetsByCheck(txdate, description, amount, account) {
+async function payAssetsByCheck(txdate, description, amount, account) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -454,7 +454,7 @@ function payAssetsByCheck(txdate, description, amount, account) {
     }
 }
 
-function payAssetsByCredit(txdate, description, amount, account) {
+async function payAssetsByCredit(txdate, description, amount, account) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, 'Asset');
@@ -481,7 +481,7 @@ function payAssetsByCredit(txdate, description, amount, account) {
  *
  * Credit Cash (decreases its balance)
  */
-function payExpenseByCheck(txdate, description, amount, account) {
+async function payExpenseByCheck(txdate, description, amount, account) {
     try {
 	    var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -510,7 +510,7 @@ function payExpenseByCheck(txdate, description, amount, account) {
  *
  * Credit Accounts Payable (increases its balance)
  */
-function payExpenseByCard(txdate, description, amount, account) {
+async function payExpenseByCard(txdate, description, amount, account) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, 'Expense');
@@ -539,7 +539,7 @@ function payExpenseByCard(txdate, description, amount, account) {
  *
  * Credit Cash (decrease its balance)
  */
-function cardPayment(txdate, description, amount) {
+async function cardPayment(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -568,7 +568,7 @@ function cardPayment(txdate, description, amount) {
  *
  * Credit Cash (decrease its balance)
  */
-function cashPayment(txdate, description, amount) {
+async function cashPayment(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -597,7 +597,7 @@ function cashPayment(txdate, description, amount) {
  * 
  * Credit Sales (increases its balance)
  */
-function salesCash(txdate, description, amount) {
+async function salesCash(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Sales", "Revenue");
@@ -626,7 +626,7 @@ function salesCash(txdate, description, amount) {
  *
  * Credit Sales (increases the balance)
  */
-function salesCard(txdate, description, amount) {
+async function salesCard(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Sales", "Revenue");
@@ -655,7 +655,7 @@ function salesCard(txdate, description, amount) {
  * 
  * Credit A/R (decreases the balance)
  */
-function accountsReceivablePayment(txdate, description, amount) {
+async function accountsReceivablePayment(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -684,7 +684,7 @@ function accountsReceivablePayment(txdate, description, amount) {
  *
  * Credit Cash (decrease its balance)
  */
-function distribution(txdate, description, amount) {
+async function distribution(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash', 'Cash');
@@ -709,7 +709,7 @@ function distribution(txdate, description, amount) {
  * Credit Purchases is a Liability (decrease it's balance)
  * Credit Inventory is an Asset (increase or decrease based on the amount)
  */
-function COGS(txdate,description,amount, cogs='COGS',purchase='Purchases',inventory='Inventory') {
+async function COGS(txdate,description,amount, cogs='COGS',purchase='Purchases',inventory='Inventory') {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(cogs, 'Expense');
@@ -746,7 +746,7 @@ function COGS(txdate,description,amount, cogs='COGS',purchase='Purchases',invent
  * Unearned Revenue liability account is credited for amount (balance is increasing)
  * 
  */
-function unearnedRevenue(txdate, description, amount) {
+async function unearnedRevenue(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Cash','Asset');
@@ -772,7 +772,7 @@ function unearnedRevenue(txdate, description, amount) {
  * Bad Debt expense account debited 
  * Account Receivable is credited
  */
-function badDebt(txdate, description, amount) {
+async function badDebt(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add('Bad Debt','Expense');
@@ -797,7 +797,7 @@ function badDebt(txdate, description, amount) {
  * Income Receivable is debited (increases the balance)
  * Income account is credited (increases the balance)
  */
-function accruedIncome(txdate, description, amount) {
+async function accruedIncome(txdate, description, amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Income Receivable", "Asset");
@@ -823,7 +823,7 @@ function accruedIncome(txdate, description, amount) {
  * Cash Account is debited (increases the balance)
  * Income Receivable is credited (decreases the balamce)
  */
-function accruedIncomePayment() {
+async function accruedIncomePayment() {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Income Receivable", "Asset");
@@ -848,7 +848,7 @@ function accruedIncomePayment() {
  * Expense account is debited (balance is increasing)
  * Payable account is credited (balance is increasing)
  */
-function accruedExpense(expense,payable,txdate,description,amount) {
+async function accruedExpense(expense,payable,txdate,description,amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add($expense, "Asset");
@@ -874,7 +874,7 @@ function accruedExpense(expense,payable,txdate,description,amount) {
  * 
  * Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asset)
  */
-function dividendDeclared(txdate,description,amount) {
+async function dividendDeclared(txdate,description,amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Retained Earnings", "Equity");
@@ -900,7 +900,7 @@ function dividendDeclared(txdate,description,amount) {
  *      Debit*= (decrease) -> Dividends Payable (liability)
  *      Credit (decrease) -> Cash (Asset)
  */
-function dividendPaid(txdate,description,amount) {
+async function dividendPaid(txdate,description,amount) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add("Cash", "Asset");
@@ -926,7 +926,7 @@ function dividendPaid(txdate,description,amount) {
  * Those costs shall be charged to expense when incurred as required by Subtopic
  * 
  * For purposes of this Subtopic, the technological feasibility of a computer software product is established when the entity has completed all planning, 
- * designing, activities that are necessary to establish that the product can be produced to meet its design specifications including functions, features, 
+ * designing, activities that are necessary to establish that the product can be produced to meet its design specifications including async functions, features, 
  * and technical performance requirements. At a minimum, the entity shall have performed the activities in either (a) or (b) as evidence that
  * technological feasibility has been established: 
  */
@@ -937,7 +937,7 @@ function dividendPaid(txdate,description,amount) {
  * Receive: Cash (Asset) -> Debit (increase)
  *          Refundable Secuirty Deposit (Liability) -> Credit (Increase)
  */
-function securityDepositReceived(txdate,description,amount) {
+async function securityDepositReceived(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Asset");
@@ -954,7 +954,7 @@ function securityDepositReceived(txdate,description,amount) {
  * Paid:    Cash (Asset) -> Credit (decrease)
  *          Security Deposit (Asset) -< Debit (increase) 
  */
-function securityDepositPaid(txdate,description,amount) {
+async function securityDepositPaid(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Asset");
@@ -977,7 +977,7 @@ function securityDepositPaid(txdate,description,amount) {
  * 
  * the Cash (Asset account) and the Unearned Revenue (Liability account) are increasing.
  */
-function deferredRevenue(txdate,description,amount) {
+async function deferredRevenue(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Asset");
@@ -998,7 +998,7 @@ function deferredRevenue(txdate,description,amount) {
  * Once the services are performed, the income can be recognized with the following entry:  
  * This entry is decreasing the liability account and increasing revenue.
  */
-function recognizeDeferredRevenue(txdate,description,amount) {
+async function recognizeDeferredRevenue(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Unearned Revenue","Liability");
@@ -1024,7 +1024,7 @@ function recognizeDeferredRevenue(txdate,description,amount) {
  * 
  * The (Asset account) is increasing, and Cash (Asset account) is decreasing.
  */
-function deferredExpense(asset_account,txdate,description,amount) {
+async function deferredExpense(asset_account,txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(asset_account,"Asset");
@@ -1044,7 +1044,7 @@ function deferredExpense(asset_account,txdate,description,amount) {
  * 
  * Here we are decreasing our (Asset) and increasing our (Expense)
  */
-function recognizeDeferredExpense(asset_account,expense_accouont,txdate,description,amount) {
+async function recognizeDeferredExpense(asset_account,expense_accouont,txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(asset_account,"Asset");
@@ -1063,7 +1063,7 @@ function recognizeDeferredExpense(asset_account,expense_accouont,txdate,descript
 /**
  * Prepaid Subscriptions 
  */
-function prepaidSubscriptions(txdate,description,amount) {
+async function prepaidSubscriptions(txdate,description,amount) {
     try {
         deferredExpense("Prepaid Subscriptions",txdate,description,amount);
     } catch(error) {
@@ -1075,7 +1075,7 @@ function prepaidSubscriptions(txdate,description,amount) {
  * 
  * is an adjusting entry when the prepaid subscription is recognized
  */
-function recognizePrepaidSubscription(txdate,description,amount) {
+async function recognizePrepaidSubscription(txdate,description,amount) {
     try {
         recognizeDeferredExpense("Prepaid Subscriptions","Subscriptions",txdate,description,amount);
     } catch(error) {
@@ -1093,7 +1093,7 @@ function recognizePrepaidSubscription(txdate,description,amount) {
  * @param {string} assetClass, default='Common Stock', other choices are 'Preferred Stock', Debt, Commodity, etc.
  * @param {number} parValue, default=0
  */
-function paidInCapitalStock(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
+async function paidInCapitalStock(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Cash");
@@ -1135,7 +1135,7 @@ function paidInCapitalStock(txdate,description,amount,shares,assetClass="Common 
  * 
  * Also used for Participating Preferred Stock divident, see https://www.accountingcoach.com/stockholders-equity/explanation/7
  */
-function stockDividend(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
+async function stockDividend(txdate,description,amount,shares,assetClass="Common Stock",parValue=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Retained Earnings","Equity");
@@ -1170,7 +1170,7 @@ function stockDividend(txdate,description,amount,shares,assetClass="Common Stock
  * Cash Dividend Declared 
  * See https://www.accountingtools.com/articles/how-do-i-account-for-cash-dividends.html
  */
-function cashDividendDeclared(txdate,description,amount) {
+async function cashDividendDeclared(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Retained Earnings","Equity");
@@ -1190,7 +1190,7 @@ function cashDividendDeclared(txdate,description,amount) {
  * Cash Dividend Payable
  * See https://www.accountingtools.com/articles/how-do-i-account-for-cash-dividends.html
  */
-function cashDividendPayable(txdate,description,amount) {
+async function cashDividendPayable(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Cash");
@@ -1223,7 +1223,7 @@ function cashDividendPayable(txdate,description,amount) {
  * 
  * assetClass can be "Common Stock", "Preferred Stock", "Debt", "Commodity", "Merger & Acquisitions", "Employee"
  */
-function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,shares,assetClass="Common Stock",parValue=0) {
+async function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,shares,assetClass="Common Stock",parValue=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add(asset_account,"Asset");
@@ -1257,7 +1257,7 @@ function stocksIssuedOtherThanCash(txdate,description,amount,asset_account,share
 /**
  * Working hours
  */
-function workingHours(hoursPerWeek) {
+async function workingHours(hoursPerWeek) {
     let hoursPerYear = Math.round(Number(hoursPerWeek / 52));
     return {
         workHoursInYear: hoursPerYear,
@@ -1267,7 +1267,7 @@ function workingHours(hoursPerWeek) {
 /**
  * Payroll Payable
  */
-function payrollPayable(txdate,description,amount) {
+async function payrollPayable(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Cash");
@@ -1287,7 +1287,7 @@ function payrollPayable(txdate,description,amount) {
  * Accrued Interest
  * See https://www.accountingcoach.com/bonds-payable/explanation/2
  */
-function accruedInterest(txdate,description,amount) {
+async function accruedInterest(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1305,7 +1305,7 @@ function accruedInterest(txdate,description,amount) {
 /**
  * Interest Expense
  */
-function interestExpense(txdate,description,amount) {
+async function interestExpense(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1324,7 +1324,7 @@ function interestExpense(txdate,description,amount) {
 /**
  * Bonds Issued at Par with No Accrued Interest
  */
-function bondsIssuedWOAccruedInterest(txdate,description,amount) {
+async function bondsIssuedWOAccruedInterest(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1342,7 +1342,7 @@ function bondsIssuedWOAccruedInterest(txdate,description,amount) {
 /**
  * Bonds Issued at Par with Accrued Interest
  */
-function bondsIssuedWithAccruedInteres(txdate,description,amount,interest) {
+async function bondsIssuedWithAccruedInteres(txdate,description,amount,interest) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1364,7 +1364,7 @@ function bondsIssuedWithAccruedInteres(txdate,description,amount,interest) {
 /**
  * Bond Premium with Straight-Line Amortization
  */
-function bondPremium(txdate,description,amount,premium) {
+async function bondPremium(txdate,description,amount,premium) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1386,7 +1386,7 @@ function bondPremium(txdate,description,amount,premium) {
 /**
  * Bond Premium Interest Payment
  */
-function bondPremiumInterestPayment(txdate,description,amount,premium) {
+async function bondPremiumInterestPayment(txdate,description,amount,premium) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1409,7 +1409,7 @@ function bondPremiumInterestPayment(txdate,description,amount,premium) {
  * Bond Discount with Straight-Line Amortization
  * See https://www.accountingcoach.com/bonds-payable/explanation/6
  */
-function bondDiscount(txdate,description,amount,discount) {
+async function bondDiscount(txdate,description,amount,discount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1442,7 +1442,7 @@ async function inventoryRawMaterials(txdate,description,amount) {
 /**
  * Work-in-process (WIP) Inventory
  */
-function inventoryWIP(txdate,description,amount) {
+async function inventoryWIP(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Work-in-Process","Inventory");
@@ -1459,7 +1459,7 @@ function inventoryWIP(txdate,description,amount) {
 /**
  * Finished Goods Inventory
  */
-function inventoryFinishedGoods(txdate,description,amount) {
+async function inventoryFinishedGoods(txdate,description,amount) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Finished Goods","Inventory");
@@ -1477,7 +1477,7 @@ function inventoryFinishedGoods(txdate,description,amount) {
 /**
  * Inventory Purchase
  */
-function inventoryPurchase(txdate,description,amount,inventory="Raw Materials") {
+async function inventoryPurchase(txdate,description,amount,inventory="Raw Materials") {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Accounts Payable","Liability");
@@ -1495,7 +1495,7 @@ function inventoryPurchase(txdate,description,amount,inventory="Raw Materials") 
 /**
  * Inventory Sold
  */
-function inventorySold(txdate,description,amount,inventory="Finished Goods") {
+async function inventorySold(txdate,description,amount,inventory="Finished Goods") {
     try {
         var coa = new ChartOfAccounts();
         coa.add("COGS","Expense");
@@ -1522,7 +1522,7 @@ function inventorySold(txdate,description,amount,inventory="Finished Goods") {
  * 
  * Use this helper when you discover actual losses, debit your reserve account and credit inventory by the loss amount.
  */
-function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_asset="Shrinkage Reserve") {
+async function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_asset="Shrinkage Reserve") {
     var coa = new ChartOfAccounts();
     coa.add(contra_asset,AccountTypes.ContraAsset);
     coa.add(asset,AccountTypes.Asset);
@@ -1545,7 +1545,7 @@ function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_a
  * 
  * ONLY use the COGS if inventory loss is small, otherwise use an Inventory expense
  */
-function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",contra_asset="Shrinkage Reserve") {
+async function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",contra_asset="Shrinkage Reserve") {
     var coa = new ChartOfAccounts();
     coa.add(contra_asset,AccountTypes.ContraAsset);
     coa.add(expense,AccountTypes.Expense);
@@ -1556,7 +1556,7 @@ function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",cont
     var expenseAccount = new Expense(expense);
     expenseAccount.increase(txdate,description,amount);
 }
-function initializeEquity() {
+async function initializeEquity() {
     var coa = new ChartOfAccounts();
     coa.add('Common Shares Par Value','Equity');
     coa.add('Additional Paid-in Capital','Equity');
@@ -1577,7 +1577,7 @@ function initializeEquity() {
  * @param {number} amount
  * @param {string} account
  */
-function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
+async function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Revenue");
@@ -1594,6 +1594,128 @@ function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
         fees.increase(txdate,`Paypal fee for: ${description}`,fee);
     } catch(error) {
         console.error(error);
+    }
+}
+
+async function commissionPayable(txdate,description,amount) {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add("Commission Expense","Expense");
+        coa.add("Commission Payable","Liability");
+
+        var commission_payable = new Liability("Commission Payable");
+        var commission_expense = new Expense("Commission Expense");
+
+        commission_expense.addDebit(txdate,description,amount);
+        commission_payable.addCredit(txdate,description,amount);
+
+    } catch(error) {
+        console.error(error)
+    }
+}
+
+/**
+ * See https://www.accountingtools.com/articles/commission-expense-accounting#:~:text=Under%20the%20cash%20basis%20of,commission%20paid%20to%20the%20employee.
+ * 
+ * @param {*} txdate 
+ * @param {*} description 
+ * @param {*} amount 
+ * @param {*} asset 
+ */
+async function commissionPaid(txdate,description,amount,asset="Cash") {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add("Commission Expense","Expense");
+        coa.add("Commission Payable","Liability");
+        coa.add(asset,"Asset");
+
+        var commission_payable = new Liability("Commission Payable");
+        var commission_expense = new Expense("Commission Expense");
+        var asset_account = new Asset(asset);
+
+        commission_payable.addDebit(txdate,description,amount);
+        commission_expense.addCredit(txdate,description,amount);
+        commission_expense.addDebit(txdate,description,amount);
+        asset_account.addCredit(txdate,description,amount);
+
+    } catch(error) {
+        console.error(error)
+    }
+}
+
+/**
+ * In a double-entry accounting system, when allocating funds for a new approval request, you typically use the following ledger accounts:
+ * 
+ * 1. Cash/Bank Account: This account tracks the cash or bank balance available in your organization. When funds are allocated for the new approval request, 
+ *      you'll debit this account to record the increase in the available funds.
+ * 2. Funding Allocation Account: This account is used to record the allocation of funds for specific purposes, projects, or approval requests. 
+ *      You'll credit this account to indicate that funds have been allocated for the new request.
+ * 3. Expense/Approval Request Account: This account tracks the expenses or costs associated with the approval requests. 
+ *      When the approval request is approved and the allocated funds are spent, you'll debit this account to record the expense.
+ * 
+ * Let's illustrate the double-entry accounting entries for allocating funds for a new approval request:
+ * 
+ * 1. Initial Balance:
+ *    - Cash/Bank Account: $10,000 (Debit)
+ *    - Funding Allocation Account: $0 (Credit)
+ *    - Approval Request Account: $0 (Credit)
+ *    - Payment Account: $0 (Credit)
+ * 
+ * 2. Funding Allocation for New Approval Request:
+ *    - Cash/Bank Account: $10,000 (Debit)
+ *    - Funding Allocation Account: $1,000 (Credit)
+ *    - Approval Request Account: $0 (Credit)
+ *    - Payment Account: $0 (Credit)
+ * 
+ * 3. When the Approval Request is Approved and Funds are Spent:
+ *    - Cash/Bank Account: $9,000 (Debit) -> Actual cash spent on the approval request
+ *    - Funding Allocation Account: $0 (Debit) -> Funds used up
+ *    - Approval Request Account: $1,000 (Debit) -> Expense incurred
+ *    - Payment Account: $1,000 (Credit) -> Payment made for the approval request
+ * 
+ * The Payment Account is used to record the payment made (credit entry) when funds are spent for the approved approval request. 
+ * This completes the accounting entries, showing the flow of funds from the Cash/Bank Account to the Funding Allocation Account, Approval Request Account, 
+ * and finally, to the Payment Account.
+ * 
+ * Please note that the specific account names and chart of accounts might vary based on your organization's accounting system and practices. 
+ * Always consult with your accounting department or a certified accountant to ensure accurate and compliant bookkeeping for your business.
+ */
+
+async function allocateFundingAccount(txdate,description,amount,asset="Cash",equity="FundingAllocation",expense="ApprovalRequest") {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add(asset,"Cash");
+        coa.add(equity,"Equity");
+        coa.add(expense,"Expense");
+
+        var asset_account = new Asset(asset);
+        var funding_allocation_account = new Equity(equity);
+        var approval_request_account = new Expense(expense);
+
+        asset_account.addDebit(txdate,description,amount);
+        funding_allocation_account.addCredit(txdate,description,amount);
+        approval_request_account.addCredit(txdate,description,0);
+    } catch(error) {
+        console.error(error);        
+    }
+}
+
+async function spendFundingAccount(txdate,description,amount,payable="AccountPayable",equity="FundingAllocation",expense="ApprovalRequest") {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add(payable,"AccountPayable");
+        coa.add(equity,"Equity");
+        coa.add(expense,"Expense");
+
+        var payable_account = new Expense(payable);
+        var funding_allocation_account = new Equity(equity);
+        var approval_request_account = new Expense(expense);
+
+        payable_account.addCredit(txdate,description,amount);
+        funding_allocation_account.addDebit(txdate,description,amount);
+        approval_request_account.addDebit(txdate,description,amount);
+    } catch(error) {
+        console.error(error);        
     }
 }
 
@@ -1617,6 +1739,168 @@ function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
 IFNULL((SELECT  j.debit-j.credit  FROM journal j JOIN accounts a ON j.account=a.name) ,0.00) AS balance 
 FROM accounts  a WHERE a.company_id=1
  */
+
+/**
+ * When a software license is sold as an NFT and the payment is made using cryptocurrency, the accounting treatment involves recognizing both the sale of the NFT and the receipt of cryptocurrency. 
+ * Here's a general example based on accrual accounting principles:
+ * 
+ * 1. Record Revenue from NFT Sale:
+ *    - Debit: Cryptocurrency Asset (to recognize the increase in cryptocurrency)
+ *    - Credit: Sales Revenue (to recognize the revenue from the sale of the NFT)
+ * 
+ * 2. Recognize Revenue (if applicable):
+ *    If the software license provides future services or updates, and revenue recognition criteria are not met immediately, you may initially record unearned revenue:
+ *    - Debit: Unearned Revenue
+ *    - Credit: Sales Revenue
+ * 
+ * 3. Recognize Cryptocurrency Received:
+ *    - Debit: Cryptocurrency Asset (to recognize the receipt of cryptocurrency)
+ *    - Credit: Accounts Receivable or Cash (depending on whether the payment is immediate or if there is a delay)
+ * 
+ * 4. Record Any Transaction Fees:
+ *    If there are transaction fees associated with receiving cryptocurrency, record them:
+ *    - Debit: Transaction Fees Expense
+ *    - Credit: Cryptocurrency Asset (to reduce the amount received)
+ * 
+ * 5. Recognize Revenue (if applicable):
+ *    Once the revenue recognition criteria are met, move the unearned revenue to recognized revenue:
+ *    - Debit: Unearned Revenue
+ *    - Credit: Sales Revenue
+ * 
+ * 6. Fair Value Consideration:
+ *    Cryptocurrency values can be volatile, so it's important to consider fair value adjustments. If there are significant fluctuations in the value of the cryptocurrency between
+ *    the time of the sale and receipt, you may need to adjust the value of the cryptocurrency asset.
+ * 
+ * Keep in mind that accounting for cryptocurrency transactions can be complex due to the volatility of cryptocurrency values and regulatory considerations. 
+ */
+
+async function softwareLicense(xdate,description,amount,fee,company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add("Cryptocurrency", "Asset");
+		coa.add("Sales", "Revenue");
+		coa.add("Account Receivable", "Asset");
+        coa.add("Transaction Fee","Expense");
+
+        var cryptocurrency = new Asset("Cryptocurrency");
+        var sales = new Revenue("Sales");
+        var transaction_fee = new Expense("Transaction Fee");
+        var account_receivable = new Expense("Asset");
+
+        cryptocurrency.addDebit(date,description,amount,company_id,office_id);
+        sales.addCredit(date,description,amount,company_id,office_id);
+        account_receivable.addCredit(date,description,amount,company_id,office_id);
+        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
+        cryptocurrency.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * When you exchange cryptocurrency for USD (U.S. Dollars), you'll need to record the transaction in your accounting records. Here's a general example based on accrual accounting principles:
+ * 
+ * 1. Record the Sale of Cryptocurrency:
+ *    - Debit: Cash (or Bank Account) - to increase the USD balance
+ *    - Credit: Cryptocurrency Asset - to decrease the value of the cryptocurrency being sold
+ * 
+ * 2. Recognize Gain or Loss:
+ *    If there is a gain or loss on the exchange due to changes in the value of the cryptocurrency, you may need to recognize it:
+ *    - Debit or Credit: Gain or Loss on Cryptocurrency Exchange - to capture any difference between the value of the cryptocurrency when acquired and its value when exchanged
+ * 
+ * 3. Record Any Transaction Fees:
+ *    If there are fees associated with the cryptocurrency exchange, record them separately:
+ *    - Debit: Transaction Fees Expense
+ *    - Credit: Cash (or Bank Account) - to reduce the amount received
+ * 
+ * Here's an example of the journal entry:
+ * 
+ * 
+ * | Account                                 | Debit ($)  | Credit ($) |
+ * |-----------------------------------------|------------|------------|
+ * | Cash or Bank Account                    | XXXX       |            |
+ * | Cryptocurrency Asset                    |            | XXXX       |
+ * | Gain or Loss on Cryptocurrency Exchange |  (or)      |  (or)      |
+ * | Transaction Fees Expense                | XXXX       |            |
+ * 
+ * 
+ * Please note that the specific accounts and amounts will depend on the details of your transaction, such as the amount of cryptocurrency exchanged, any fees incurred, 
+ * and whether there is a gain or loss on the exchange.
+ * 
+ * It's essential to consult with an accountant or financial professional, especially when dealing with cryptocurrency transactions, 
+ * as accounting treatment may vary based on specific circumstances and regulations. Additionally, fair value adjustments may be necessary 
+ * if there are significant fluctuations in the value of the cryptocurrency.
+ */
+async function exchangeCryptocurrencyToUSD(date,description,amount,fee,gainLoss=0,account='Cash',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add("Cryptocurrency", "Asset");
+		coa.add(account, "Asset");
+        coa.add("Transaction Fee","Expense");
+
+        var cryptocurrency = new Asset("Cryptocurrency");
+        var transaction_fee = new Expense("Transaction Fee");
+        var debitAccount = new Expense(account);
+
+        debitAccount.addDebit(date,description,amount,company_id,office_id);
+        cryptocurrency.addCredit(date,description,amount,company_id,office_id);
+        if (gainLoss > 0) {
+            cryptocurrency.addDebit(date,`gain from ${description}`,gainLoss,company_id,office_id);
+        } else if (gainLoss < 0) {
+            cryptocurrency.addCredit(date,`loss from ${description}`,gainLoss,company_id,office_id);
+        }
+        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
+        debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+    } catch(error) {
+        console.error(error);
+    }
+}
+/**
+ * When you exchange USD (U.S. Dollars) for cryptocurrency, you'll need to record the transaction in your accounting records. Here's a general example based on accrual accounting principles:
+ * 
+ * 1. Record the Purchase of Cryptocurrency:
+ *    - Debit: Cryptocurrency Asset - to increase the value of the cryptocurrency acquired
+ *    - Credit: Cash (or Bank Account) - to decrease the USD balance
+ * 
+ * 2. Recognize Any Transaction Fees:
+ *    If there are fees associated with the cryptocurrency purchase, record them separately:
+ *    - Debit: Cryptocurrency Asset - to increase the cost basis of the cryptocurrency
+ *    - Credit: Cash (or Bank Account) - to reduce the amount spent
+ * 
+ * Here's an example of the journal entry:
+ * 
+ * 
+ * | Account                            | Debit ($)  | Credit ($) |
+ * |------------------------------------|------------|------------|
+ * | Cryptocurrency Asset               | XXXX       |            |
+ * | Cash or Bank Account               |            | XXXX       |
+ * | Transaction Fees Expense           | XXXX       |            |
+ * 
+ * 
+ * Please note that the specific accounts and amounts will depend on the details of your transaction, such as the amount of cryptocurrency purchased and any associated fees.
+ * 
+ * It's important to consult with an accountant or financial professional when recording cryptocurrency transactions, as accounting treatment may vary based on specific circumstances and regulations. 
+ * Additionally, fair value adjustments may be necessary if there are significant fluctuations in the value of the cryptocurrency.
+ */
+async function exchangeUSDToCryptocurrency(date,description,amount,fee,account='Cash',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add("Cryptocurrency", "Asset");
+		coa.add(account, "Asset");
+        coa.add("Transaction Fee","Expense");
+
+        var cryptocurrency = new Asset("Cryptocurrency");
+        var transaction_fee = new Expense("Transaction Fee");
+        var debitAccount = new Expense(account);
+
+        cryptocurrency.addDebit(date,description,amount,company_id,office_id);
+        debitAccount.addCredit(date,description,amount,company_id,office_id);
+        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
+        debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+    } catch(error) {
+        console.error(error);
+    }
+}
+
 module.exports = {
     createAccount,
     createNewUser,
@@ -1687,5 +1971,12 @@ module.exports = {
     initializeEquity,
     inventoryRawMaterials,
     inventoryWIP,
-    inventoryFinishedGoods
+    inventoryFinishedGoods,
+    commissionPayable,
+    commissionPaid,
+    allocateFundingAccount,
+    spendFundingAccount,
+    softwareLicense,
+    exchangeCryptocurrencyToUSD,
+    exchangeUSDToCryptocurrency,
 }
