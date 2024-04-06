@@ -91,3 +91,6 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * softwareLicense
 * exchangeCryptocurrencyToUSD
 * exchangeUSDToCryptocurrency
+* googleAdsenseEarning
+* googleAdsensePayout
+* googleAdsenseReceivePayout

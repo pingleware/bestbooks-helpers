@@ -12,7 +12,12 @@ const { ChartOfAccounts,
         ContraLiability, 
         Vendor, 
         Inventory,
-        Model} = require("@pingleware/bestbooks-core");
+        Model,
+        Bank,
+        info,
+        warn,
+        error
+    } = require("@pingleware/bestbooks-core");
 
 async function createAccount(name,type) {
     try {
@@ -20,8 +25,8 @@ async function createAccount(name,type) {
         await coa.add(name,type).then(async function(status){
             return status;
         });
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -45,8 +50,8 @@ async function createNewUser(usertype,usermeta) {
                 }
                 break;
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -71,8 +76,8 @@ async function getUsersByType(userType) {
                 }
                 break;
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -92,8 +97,8 @@ async function getTransactions(account, type, begin_date, end_date) {
     try {
         var ledger = new Ledger(account, type);
         return ledger.getTransactionsByRange(begin_date,end_date);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -124,8 +129,8 @@ async function addTransaction(name, type, date, description, debit, credit,callb
                 });
             });
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -148,8 +153,8 @@ async function addTransactionSync(name, type, date, description, debit, credit,c
             results[1] = ledger.addCredit(date, description, credit, company_id, office_id)
         }
         return results;
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -162,8 +167,8 @@ async function editTransaction(id, type, account, date, description, debit, cred
 			ledger.getByID(id);
 			return await ledger.update(id, account, type, date, description, debit, credit);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -171,8 +176,8 @@ async function addJournalTransaction(account, date, reference, debit, credit, co
     try {
         var journal = new  Journal(account);
         journal.add(date,reference,account,debit,credit,company_id,office_id);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -180,8 +185,8 @@ async function editJournalTransaction(id, account, date, reference, debit, credi
     try {
         var journal = new Journal(account);
         journal.update(id,date,account,debit,credit,reference);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -196,8 +201,8 @@ async function asset(account, txdate, description, amount) {
         } else {
             asset.increase(txdate,description,amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -212,8 +217,8 @@ async function expense(account, txdate, description, amount) {
         } else {
             expense.increase(txdate,description,amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -250,8 +255,8 @@ async function liability(account, txdate, description, amount) {
         } else {
             liability.increase(txdate,description,amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -266,8 +271,8 @@ async function equity(account, txdate, description, amount) {
         } else {
             equity.decrease(txdate, description, amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -282,8 +287,8 @@ async function revenue(account, txdate, description, amount) {
         } else {
             revenue.decrease(txdate, description, amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -291,8 +296,8 @@ async function isJournalInbalance() {
     try {
         var journal = new Journal();
 		return journal.inBalance();
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -321,8 +326,8 @@ async function investment(txdate, description, amount, equity='Owners Equity') {
 
 		var equity = new Equity(equity);
 		equity.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -377,8 +382,8 @@ async function bankfee(txdate, description, amount) {
 
 		var expense = new Expense('Bank Service Charges');
 		expense.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -415,8 +420,8 @@ async function loanPayment(txdate, description, amount, interest) {
 
 		var expense = new Expense('Interest Expense');
 		expense.increase(txdate, description, interest);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -449,8 +454,8 @@ async function payAssetsByCheck(txdate, description, amount, account) {
 
 		var asset = new Asset(account);
 		asset.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -465,8 +470,8 @@ async function payAssetsByCredit(txdate, description, amount, account) {
 
 		var liability = new Liability('Accounts Payable');
 		liability.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -492,8 +497,8 @@ async function payExpenseByCheck(txdate, description, amount, account) {
 
 		var expense = new Expense(account);
 		expense.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -521,8 +526,8 @@ async function payExpenseByCard(txdate, description, amount, account) {
 
 		var expense = new Expense(account);
 		expense.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -550,8 +555,8 @@ async function cardPayment(txdate, description, amount) {
 
 		var liability = new Liability('Accounts Payable');
 		liability.decrease(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -579,8 +584,8 @@ async function cashPayment(txdate, description, amount) {
 
 		var cogs = new Expense('Cost of Goods Sold');
 		cogs.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -608,8 +613,8 @@ async function salesCash(txdate, description, amount) {
 
 		var cash = new Cash("Cash");
 		cash.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -637,8 +642,8 @@ async function salesCard(txdate, description, amount) {
 
 		var ar = new Asset("Account Receivable");
 		ar.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -666,8 +671,8 @@ async function accountsReceivablePayment(txdate, description, amount) {
 
 		var ar = new Asset("Account Receivable");
 		ar.decrease(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -695,8 +700,8 @@ async function distribution(txdate, description, amount) {
 
 		var equity = new Equity('Distrbution');
 		equity.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -728,8 +733,8 @@ async function COGS(txdate,description,amount, cogs='COGS',purchase='Purchases',
 		} else {
 			asset.increase(txdate, description, amount);
 		}
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -757,8 +762,8 @@ async function unearnedRevenue(txdate, description, amount) {
 
 		var unearned_revenue = new Revenue('Unearned Revenue');
 		unearned_revenue.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -783,8 +788,8 @@ async function badDebt(txdate, description, amount) {
 
 		var account_receivable = new Asset('Account Receivable');
 		account_receivable.decrease(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -808,8 +813,8 @@ async function accruedIncome(txdate, description, amount) {
 
 		var ir = new Asset("Income Receivable");
 		ir.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -834,8 +839,8 @@ async function accruedIncomePayment() {
 
 		var cash = new Asset("Cash");
 		cash.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -859,8 +864,8 @@ async function accruedExpense(expense,payable,txdate,description,amount) {
 
 		var payable_account = new Liability(payable);
 		payable_account.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -885,8 +890,8 @@ async function dividendDeclared(txdate,description,amount) {
 
 		var payable_account = new Liability("Dividends Payable");
 		payable_account.increase(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -911,8 +916,8 @@ async function dividendPaid(txdate,description,amount) {
 
 		var payable_account = new Liability("Dividends Payable");
 		payable_account.decrease(txdate, description, amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -946,8 +951,8 @@ async function securityDepositReceived(txdate,description,amount) {
         var refundableSecurityDeposit = new Liability("Refundable Security Deposit");
         cash.increase(txdate,description,amount);
         refundableSecurityDeposit.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -963,8 +968,8 @@ async function securityDepositPaid(txdate,description,amount) {
         var securityDeposit = new Liability("Security Deposit");
         cash.decrease(txdate,description,amount);
         securityDeposit.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -988,8 +993,8 @@ async function deferredRevenue(txdate,description,amount) {
 
         cash.increase(txdate,description,amount);
         unernedRevenue.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1009,8 +1014,8 @@ async function recognizeDeferredRevenue(txdate,description,amount) {
 
         unernedRevenue.decrease(txdate,description,amount);
         revenue.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1035,8 +1040,8 @@ async function deferredExpense(asset_account,txdate,description,amount) {
 
         asset.increase(txdate,description,amount);
         cash.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1055,8 +1060,8 @@ async function recognizeDeferredExpense(asset_account,expense_accouont,txdate,de
 
         asset.decrease(txdate,description,amount);
         expense.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1066,8 +1071,8 @@ async function recognizeDeferredExpense(asset_account,expense_accouont,txdate,de
 async function prepaidSubscriptions(txdate,description,amount) {
     try {
         deferredExpense("Prepaid Subscriptions",txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1078,8 +1083,8 @@ async function prepaidSubscriptions(txdate,description,amount) {
 async function recognizePrepaidSubscription(txdate,description,amount) {
     try {
         recognizeDeferredExpense("Prepaid Subscriptions","Subscriptions",txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1119,8 +1124,8 @@ async function paidInCapitalStock(txdate,description,amount,shares,assetClass="C
         } else {
             equity.increase(txdate,description,amount);    
         }    
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1161,8 +1166,8 @@ async function stockDividend(txdate,description,amount,shares,assetClass="Common
         } else {
             equity.increase(txdate,description,amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1181,8 +1186,8 @@ async function cashDividendDeclared(txdate,description,amount) {
 
         var dividendsPayable = new Liability("Dividends Payable");
         dividendsPayable.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1201,8 +1206,8 @@ async function cashDividendPayable(txdate,description,amount) {
 
         var cash = new Cash();
         cash.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1249,8 +1254,8 @@ async function stocksIssuedOtherThanCash(txdate,description,amount,asset_account
         } else {
             equity.increase(txdate,description,amount);
         }
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1278,8 +1283,8 @@ async function payrollPayable(txdate,description,amount) {
 
         payroll.increase(txdate,description,amount);
         cash.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1298,8 +1303,8 @@ async function accruedInterest(txdate,description,amount) {
 
         expense.increase(txdate,description,amount);
         liability.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1317,8 +1322,8 @@ async function interestExpense(txdate,description,amount) {
         expense.increase(txdate,description,amount);
         cash.decrease(txdate,description,amount);
 
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1335,8 +1340,8 @@ async function bondsIssuedWOAccruedInterest(txdate,description,amount) {
 
         cash.increase(txdate,description,amount);
         liability.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1357,8 +1362,8 @@ async function bondsIssuedWithAccruedInteres(txdate,description,amount,interest)
         bondsPayable.increase(txdate,description,amount);
         interestPayable.incresse(txdate,description,interest);
 
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1379,8 +1384,8 @@ async function bondPremium(txdate,description,amount,premium) {
         bondsPayable.increase(txdate,description,amount);
         bondPremium.increase(txdate,description,premium);
 
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1401,8 +1406,8 @@ async function bondPremiumInterestPayment(txdate,description,amount,premium) {
         liability.decrease(txdate,description,premium);
         interestPayable.increase(txdate,description,Number(amount + premium));
 
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1424,8 +1429,8 @@ async function bondDiscount(txdate,description,amount,discount) {
         bondsPayable.increase(txdate,description,amount);
         bondDiscount.increase(txdate,description,discount);
 
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1435,8 +1440,8 @@ async function bondDiscount(txdate,description,amount,discount) {
 async function inventoryRawMaterials(txdate,description,amount) {
     try {
         await inventoryPurchase(txdate,description,amount,"Raw Materials");
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1452,8 +1457,8 @@ async function inventoryWIP(txdate,description,amount) {
 
         wip.increase(txdate,description,amount);
         rawMaterials.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1469,8 +1474,8 @@ async function inventoryFinishedGoods(txdate,description,amount) {
 
         finishedGoods.increase(txdate,description,amount);
         wip.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1488,8 +1493,8 @@ async function inventoryPurchase(txdate,description,amount,inventory="Raw Materi
 
         inventory.increase(txdate,description,amount);
         accountsPayable.increase(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1506,8 +1511,8 @@ async function inventorySold(txdate,description,amount,inventory="Finished Goods
 
         cogs.increase(txdate,description,amount);
         inventoryAccount.decrease(txdate,description,amount);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1592,8 +1597,8 @@ async function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
 
         var fees = new Expense("Bank Fee");
         fees.increase(txdate,`Paypal fee for: ${description}`,fee);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1609,8 +1614,8 @@ async function commissionPayable(txdate,description,amount) {
         commission_expense.addDebit(txdate,description,amount);
         commission_payable.addCredit(txdate,description,amount);
 
-    } catch(error) {
-        console.error(error)
+    } catch(err) {
+        console.error(err)
     }
 }
 
@@ -1638,8 +1643,8 @@ async function commissionPaid(txdate,description,amount,asset="Cash") {
         commission_expense.addDebit(txdate,description,amount);
         asset_account.addCredit(txdate,description,amount);
 
-    } catch(error) {
-        console.error(error)
+    } catch(err) {
+        console.error(err)
     }
 }
 
@@ -1695,8 +1700,8 @@ async function allocateFundingAccount(txdate,description,amount,asset="Cash",equ
         asset_account.addDebit(txdate,description,amount);
         funding_allocation_account.addCredit(txdate,description,amount);
         approval_request_account.addCredit(txdate,description,0);
-    } catch(error) {
-        console.error(error);        
+    } catch(err) {
+        error(JSON.stringify(err));        
     }
 }
 
@@ -1714,8 +1719,8 @@ async function spendFundingAccount(txdate,description,amount,payable="AccountPay
         payable_account.addCredit(txdate,description,amount);
         funding_allocation_account.addDebit(txdate,description,amount);
         approval_request_account.addDebit(txdate,description,amount);
-    } catch(error) {
-        console.error(error);        
+    } catch(err) {
+        error(JSON.stringify(err));        
     }
 }
 
@@ -1792,8 +1797,8 @@ async function softwareLicense(xdate,description,amount,fee,company_id=0,office_
         account_receivable.addCredit(date,description,amount,company_id,office_id);
         transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
         cryptocurrency.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1850,8 +1855,8 @@ async function exchangeCryptocurrencyToUSD(date,description,amount,fee,gainLoss=
         }
         transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
         debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 /**
@@ -1896,8 +1901,79 @@ async function exchangeUSDToCryptocurrency(date,description,amount,fee,account='
         debitAccount.addCredit(date,description,amount,company_id,office_id);
         transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
         debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
-    } catch(error) {
-        console.error(error);
+    } catch(err) {
+        error(JSON.stringify(err));
+    }
+}
+
+/**
+ * Bookkeeping Entry for Google AdSense Earnings:
+ * 
+ * Date: [Date of transaction]
+ * 
+ * 1. Initial Google AdSense Earnings:
+ *    - Account Credit: Google AdSense Revenue
+ *    - Amount: [Amount earned from Google AdSense]
+ * 
+ * 2. Upon Reaching Threshold Balance:
+ *    - Account Debit: Google AdSense Revenue
+ *    - Account Credit: Accounts Receivable (or Bank Account)
+ *    - Amount: [Threshold balance reached, typically $100]
+ * 
+ * 3. When Monies Received:
+ *    - Account Debit: Accounts Receivable (if applicable)
+ *    - Account Credit: Bank Account
+ *    - Amount: [Amount received from Google AdSense]
+ * 
+ * Note: Ensure to record the transactions accurately, with appropriate dates and amounts. Adjust accounts based on your specific bookkeeping system and accounting practices.
+ * 
+ * Account Types:
+ * Google AdSense Revenue   Type: Credit (Revenue account)
+ * Accounts Receivable      Type: Debit (Asset account)
+ * Bank Account             Type: Debit (Asset account)
+ */
+async function googleAdsenseEarning(date,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Revenue");
+
+        var adsense = new Revenue(account);
+        addCredit(adsense,date,description,amount,company_id,office_id);
+    } catch(err) {
+        error(JSON.stringify(err));
+    }
+}
+
+async function googleAdsensePayout(date,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Revenue");
+        coa.add("Account Receivables","Asset");
+
+        var adsense = new Revenue(account);
+        var ar = new Asset("Account Receivables")
+
+        addDebit(adsense,date,description,amount,company_id,office_id);
+        addCredit(ar,date,description,amount,company_id,office_id);
+
+    } catch(err) {
+        error(JSON.stringify(err));
+    }
+}
+
+async function googleAdsenseReceivePayout(date,description,amount,account='Bank',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Bank");
+        coa.add("Account Receivables","Asset");
+
+        var bank = new Bank(account);
+        var ar = new Asset("Account Receivables")
+
+        addDebit(ar,date,description,amount,company_id,office_id);
+        addCredit(bank,date,description,amount,company_id,office_id);
+    } catch(err) {
+        error(JSON.stringify(err));
     }
 }
 
@@ -1979,4 +2055,7 @@ module.exports = {
     softwareLicense,
     exchangeCryptocurrencyToUSD,
     exchangeUSDToCryptocurrency,
+    googleAdsenseEarning,
+    googleAdsensePayout,
+    googleAdsenseReceivePayout,
 }
