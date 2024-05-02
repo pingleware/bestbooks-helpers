@@ -1977,6 +1977,96 @@ async function googleAdsenseReceivePayout(date,description,amount,account='Bank'
     }
 }
 
+/**
+ * To record the transactions involving the CFO transferring funds to the postage debit account and the subsequent deductions for each letter or package sent by the mailroom, you would typically use a double-entry bookkeeping system. Here's how you might record these transactions:
+
+1. **Initial Transfer from CFO to Postage Debit Account:**
+   
+   Debit: Postage Debit Account
+   Credit: Cash/Bank Account
+
+   This entry reflects the transfer of funds from the CFO to the postage debit account.
+
+2. **Cost Deduction for Sending Mail:**
+
+   Debit: Postage Expense Account
+   Credit: Postage Debit Account
+
+   This entry records the expense incurred by the mailroom for sending mail. The amount is deducted from the postage debit account.
+
+Let's say, for example, the CFO transfers $1,000 to the postage debit account initially, and then the mailroom sends a package costing $50 in postage:
+
+1. **Initial Transfer Entry:**
+   
+   Debit: Postage Debit Account ($1,000)
+   Credit: Cash/Bank Account ($1,000)
+
+2. **Cost Deduction Entry for Sending Mail:**
+
+   Debit: Postage Expense Account ($50)
+   Credit: Postage Debit Account ($50)
+
+These entries ensure that the transactions are accurately recorded, reflecting both the transfer of funds and the associated expenses incurred by the mailroom.
+ */
+
+/**
+ * Initial Transfer Entry
+ * 
+ * Debit: Postage Debit Account ($1,000)
+ * Credit: Cash/Bank Account ($1,000)
+ * 
+ * @param {*} date 
+ * @param {*} description 
+ * @param {*} amount 
+ * @param {*} account 
+ * @param {*} company_id 
+ * @param {*} office_id 
+ */
+async function addFundsToPostageDebitAccount(date,description,amount,account='Bank',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Bank");
+        coa.add("Postage Debit Account","Asset");
+
+        var bank = new Bank(account);
+        var postage = new Asset("Postage Debit Account");
+
+        addDebit(postage,date,description,amount,company_id,office_id);
+        addCredit(bank,date,description,amount,company_id,office_id);
+    } catch(err) {
+        error(JSON.stringify(err));
+    }
+}
+
+/**
+ * Cost Deduction Entry for Sending Mail
+ * 
+ * Debit: Postage Expense Account ($50)
+ * Credit: Postage Debit Account ($50)
+ * 
+ * @param {*} date 
+ * @param {*} description 
+ * @param {*} amount 
+ * @param {*} account 
+ * @param {*} company_id 
+ * @param {*} office_id 
+ */
+async function postageExpense(date,description,amount,account='Postage Expense Account',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(account, "Expense");
+        coa.add("Postage Debit Account","Asset");
+
+        var postageExpense = new Expense(account);
+        var postageDebit = new Asset("Postage Debit Account");
+
+        addDebit(postageExpense,date,description,amount,company_id,office_id);
+        addCredit(postageDebit,date,description,amount,company_id,office_id);
+    } catch(err) {
+        error(JSON.stringify(err));
+    }
+}
+
 module.exports = {
     createAccount,
     createNewUser,
@@ -2058,4 +2148,6 @@ module.exports = {
     googleAdsenseEarning,
     googleAdsensePayout,
     googleAdsenseReceivePayout,
+    addFundsToPostageDebitAccount,
+    postageExpense,
 }

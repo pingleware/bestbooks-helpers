@@ -94,3 +94,5 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * googleAdsenseEarning
 * googleAdsensePayout
 * googleAdsenseReceivePayout
+* addFundsToPostageDebitAccount,
+* postageExpense,
