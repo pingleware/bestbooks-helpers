@@ -10,6 +10,8 @@ const { ChartOfAccounts,
         Revenue,
         Liability, 
         ContraLiability, 
+        User,
+        Customer,
         Vendor, 
         Inventory,
         Model,
@@ -35,20 +37,19 @@ async function createNewUser(usertype,usermeta) {
         switch(usertype) {
             case 'internal':
                 {
-
+                    var user = new User();
+                    return await user.add(metadata);
                 }
-                break;
             case 'vendor':
                 {
                     var vendor = new Vendor();
                     return await vendor.add(usermeta);
                 }
-                break;
             case 'customer':
                 {
-
+                    var customer = new Customer();
+                    return await customer.add(usermeta);
                 }
-                break;
         }
     } catch(err) {
         error(JSON.stringify(err));
@@ -64,17 +65,14 @@ async function getUsersByType(userType) {
                 {
                     return await model.querySync(`SELECT * FROM users;`);
                 }
-                break;
             case 'vendor':
                 {
                     return await model.querySync(`SELECT * FROM vendor ORDER BY name ASC;`);
                 }
-                break;
             case 'customer':
                 {
                     return await model.querySync(`SELECT * FROM customer ORDER BY name ASC;`);
                 }
-                break;
         }
     } catch(err) {
         error(JSON.stringify(err));
@@ -940,7 +938,7 @@ async function dividendPaid(txdate,description,amount) {
  * Security Deposit
  * 
  * Receive: Cash (Asset) -> Debit (increase)
- *          Refundable Secuirty Deposit (Liability) -> Credit (Increase)
+ *          Refundable Security Deposit (Liability) -> Credit (Increase)
  */
 async function securityDepositReceived(txdate,description,amount) {
     try {
@@ -2067,6 +2065,43 @@ async function postageExpense(date,description,amount,account='Postage Expense A
     }
 }
 
+async function pendingPurchase(date,description,amount,expense='Expense Account',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+		coa.add(expense, "Expense");
+        coa.add("Pending Purchases","Liability");
+
+        var expenseAccount = new Expense(expense);
+        var pendingPurchases = new Liability("Pending Purchases");
+
+        addDebit(expenseAccount,date,description,amount,company_id,office_id);
+        addCredit(pendingPurchases,date,description,amount,company_id,office_id)
+    } catch(err) {
+        error(JSON.stringify(err))
+    }
+}
+
+async function pendingPurchaseCleared(date,description,amount,bank='Bank',company_id=0,office_id=0) {
+    try {
+		var coa = new ChartOfAccounts();
+        coa.add(bank,"Bank");
+        coa.add("Pending Purchases","Liability");
+
+        var bankAccount = new Bank(bank);
+        var pendingPurchases = new Liability("Pending Purchases");
+
+        addDebit(pendingPurchases,date,description,amount,company_id,office_id);
+        addCredit(bankAccount,date,description,amount,company_id,office_id)
+    } catch(err) {
+        error(JSON.stringify(err))
+    }
+}
+
+async function pendingPurchaseSettled(date,description,amount,bank='Bank',company_id=0,office_id=0) {
+    pendingPurchaseCleared(date,description,amount,bank,company_id,office_id);
+}
+
+
 module.exports = {
     createAccount,
     createNewUser,
@@ -2150,4 +2185,7 @@ module.exports = {
     googleAdsenseReceivePayout,
     addFundsToPostageDebitAccount,
     postageExpense,
+    pendingPurchase,
+    pendingPurchaseCleared,
+    pendingPurchaseSettled,
 }
