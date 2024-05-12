@@ -79,14 +79,14 @@ async function getUsersByType(userType) {
     }
 }
 
-async function addCredit(account, date, description, amount, company_id=0, office_id=0) {
-    await account.addCredit(date,description,amount,company_id,office_id).then(async function(status){
+async function addCredit(account, txdate, description, amount, company_id=0, office_id=0) {
+    await account.addCredit(txdate,description,amount,company_id,office_id).then(async function(status){
         return status;
     });
 }
 
-async function addDebit(account, date, description, amount, company_id=0, office_id=0) {
-    await account.addDebit(date,description,amount,company_id,office_id).then(async function(status){
+async function addDebit(account, txdate, description, amount, company_id=0, office_id=0) {
+    await account.addDebit(txdate,description,amount,company_id,office_id).then(async function(status){
         return status;
     });
 }
@@ -100,7 +100,7 @@ async function getTransactions(account, type, begin_date, end_date) {
     }
 }
 
-async function addTransaction(name, type, date, description, debit, credit,callback,company_id=0,office_id=0) {
+async function addTransaction(name, type, txdate, description, debit, credit,callback,company_id=0,office_id=0) {
     try {
         var status = [];
         const coa = new ChartOfAccounts();
@@ -109,19 +109,19 @@ async function addTransaction(name, type, date, description, debit, credit,callb
         const ledger = new Ledger(name,type);
 
         if (debit > 0 && credit == 0) {
-            ledger.addDebit(date, description, debit, company_id, office_id).then(async function(_status){
+            ledger.addDebit(txdate, description, debit, company_id, office_id).then(async function(_status){
                 status.push(_status);
                 callback(status);
             });
         } else if (debit == 0 && credit > 0) {
-            ledger.addCredit(date, description, credit, company_id, office_id).then(async function(_status){
+            ledger.addCredit(txdate, description, credit, company_id, office_id).then(async function(_status){
                 status.push(_status);
                 callback(status);
             });
         } else if (debit > 0 && credit > 0) {
-            ledger.addDebit(date, description, debit, company_id, office_id).then(async function(_status){
+            ledger.addDebit(txdate, description, debit, company_id, office_id).then(async function(_status){
                 status.push(_status);
-                ledger.addCredit(date, description, credit, company_id, office_id).then(async function(_status){
+                ledger.addCredit(txdate, description, credit, company_id, office_id).then(async function(_status){
                     status.push(_status);
                     callback(status);
                 });
@@ -132,7 +132,7 @@ async function addTransaction(name, type, date, description, debit, credit,callb
     }
 }
 
-async function addTransactionSync(name, type, date, description, debit, credit,company_id=0,office_id=0) {
+async function addTransactionSync(name, type, txdate, description, debit, credit,company_id=0,office_id=0) {
     try {
         var status = [];
         const coa = new ChartOfAccounts();
@@ -143,12 +143,12 @@ async function addTransactionSync(name, type, date, description, debit, credit,c
         var results = [];
 
         if (debit > 0 && credit == 0) {
-            results[0] = ledger.addDebit(date, description, debit, company_id, office_id);
+            results[0] = ledger.addDebit(txdate, description, debit, company_id, office_id);
         } else if (debit == 0 && credit > 0) {
-            results[0] = ledger.addCredit(date, description, credit, company_id, office_id);
+            results[0] = ledger.addCredit(txdate, description, credit, company_id, office_id);
         } else if (debit > 0 && credit > 0) {
-            results[0] = ledger.addDebit(date, description, debit, company_id, office_id);
-            results[1] = ledger.addCredit(date, description, credit, company_id, office_id)
+            results[0] = ledger.addDebit(txdate, description, debit, company_id, office_id);
+            results[1] = ledger.addCredit(txdate, description, credit, company_id, office_id)
         }
         return results;
     } catch(err) {
@@ -170,19 +170,19 @@ async function editTransaction(id, type, account, date, description, debit, cred
     }
 }
 
-async function addJournalTransaction(account, date, reference, debit, credit, company_id=0, office_id=0) {
+async function addJournalTransaction(account, txdate, reference, debit, credit, company_id=0, office_id=0) {
     try {
         var journal = new  Journal(account);
-        journal.add(date,reference,account,debit,credit,company_id,office_id);
+        journal.add(txdate,reference,account,debit,credit,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
 }
 
-async function editJournalTransaction(id, account, date, reference, debit, credit) {
+async function editJournalTransaction(id, account, txdate, reference, debit, credit) {
     try {
         var journal = new Journal(account);
-        journal.update(id,date,account,debit,credit,reference);
+        journal.update(id,txdate,account,debit,credit,reference);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1270,7 +1270,7 @@ async function workingHours(hoursPerWeek) {
 /**
  * Payroll Payable
  */
-async function payrollPayable(txdate,description,amount) {
+async function payrollPayable(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Cash","Cash");
@@ -1279,8 +1279,8 @@ async function payrollPayable(txdate,description,amount) {
         var cash = new Cash();
         var payroll = new Liability("Net Payroll Payable");
 
-        payroll.increase(txdate,description,amount);
-        cash.decrease(txdate,description,amount);
+        addCredit(payroll,txdate,description,amount,company_id,office_id); //payroll.increase(txdate,description,amount);
+        addDebit(cash,txdate,description,amount,company_id,office_id); //cash.decrease(txdate,description,amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1290,7 +1290,7 @@ async function payrollPayable(txdate,description,amount) {
  * Accrued Interest
  * See https://www.accountingcoach.com/bonds-payable/explanation/2
  */
-async function accruedInterest(txdate,description,amount) {
+async function accruedInterest(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1299,8 +1299,8 @@ async function accruedInterest(txdate,description,amount) {
         var expense = new Expense("Interest Expense");
         var liability = new Liability("Interest Payable");
 
-        expense.increase(txdate,description,amount);
-        liability.increase(txdate,description,amount);
+        addDebit(expense,txdate,description,amount,company_id,office_id); //expense.increase(txdate,description,amount);
+        addCredit(liability,txdate,description,amount,company_id,office_id); //liability.increase(txdate,description,amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1308,7 +1308,7 @@ async function accruedInterest(txdate,description,amount) {
 /**
  * Interest Expense
  */
-async function interestExpense(txdate,description,amount) {
+async function interestExpense(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1317,9 +1317,8 @@ async function interestExpense(txdate,description,amount) {
         var cash = new Cash();
         var expense = new Expense("Interest Expense");
 
-        expense.increase(txdate,description,amount);
-        cash.decrease(txdate,description,amount);
-
+        addDebit(expense,txdate,description,amount,company_id,office_id); //expense.increase(txdate,description,amount);
+        addDebit(cash,txdate,description,amount,company_id,office_id); //cash.decrease(txdate,description,amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1327,7 +1326,7 @@ async function interestExpense(txdate,description,amount) {
 /**
  * Bonds Issued at Par with No Accrued Interest
  */
-async function bondsIssuedWOAccruedInterest(txdate,description,amount) {
+async function bondsIssuedWOAccruedInterest(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1345,7 +1344,7 @@ async function bondsIssuedWOAccruedInterest(txdate,description,amount) {
 /**
  * Bonds Issued at Par with Accrued Interest
  */
-async function bondsIssuedWithAccruedInteres(txdate,description,amount,interest) {
+async function bondsIssuedWithAccruedInteres(txdate,description,amount,interest,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1367,7 +1366,7 @@ async function bondsIssuedWithAccruedInteres(txdate,description,amount,interest)
 /**
  * Bond Premium with Straight-Line Amortization
  */
-async function bondPremium(txdate,description,amount,premium) {
+async function bondPremium(txdate,description,amount,premium,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1389,7 +1388,7 @@ async function bondPremium(txdate,description,amount,premium) {
 /**
  * Bond Premium Interest Payment
  */
-async function bondPremiumInterestPayment(txdate,description,amount,premium) {
+async function bondPremiumInterestPayment(txdate,description,amount,premium,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Interest Expense","Expense");
@@ -1412,7 +1411,7 @@ async function bondPremiumInterestPayment(txdate,description,amount,premium) {
  * Bond Discount with Straight-Line Amortization
  * See https://www.accountingcoach.com/bonds-payable/explanation/6
  */
-async function bondDiscount(txdate,description,amount,discount) {
+async function bondDiscount(txdate,description,amount,discount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Bonds Payable","Liability");
@@ -1435,7 +1434,7 @@ async function bondDiscount(txdate,description,amount,discount) {
 /**
  * Raw Material Inventory
  */
-async function inventoryRawMaterials(txdate,description,amount) {
+async function inventoryRawMaterials(txdate,description,amount,company_id=0,office_id=0) {
     try {
         await inventoryPurchase(txdate,description,amount,"Raw Materials");
     } catch(err) {
@@ -1445,7 +1444,7 @@ async function inventoryRawMaterials(txdate,description,amount) {
 /**
  * Work-in-process (WIP) Inventory
  */
-async function inventoryWIP(txdate,description,amount) {
+async function inventoryWIP(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Work-in-Process","Inventory");
@@ -1462,7 +1461,7 @@ async function inventoryWIP(txdate,description,amount) {
 /**
  * Finished Goods Inventory
  */
-async function inventoryFinishedGoods(txdate,description,amount) {
+async function inventoryFinishedGoods(txdate,description,amount,company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Finished Goods","Inventory");
@@ -1480,7 +1479,7 @@ async function inventoryFinishedGoods(txdate,description,amount) {
 /**
  * Inventory Purchase
  */
-async function inventoryPurchase(txdate,description,amount,inventory="Raw Materials") {
+async function inventoryPurchase(txdate,description,amount,inventory="Raw Materials",company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("Accounts Payable","Liability");
@@ -1498,7 +1497,7 @@ async function inventoryPurchase(txdate,description,amount,inventory="Raw Materi
 /**
  * Inventory Sold
  */
-async function inventorySold(txdate,description,amount,inventory="Finished Goods") {
+async function inventorySold(txdate,description,amount,inventory="Finished Goods",company_id=0,office_id=0) {
     try {
         var coa = new ChartOfAccounts();
         coa.add("COGS","Expense");
@@ -1525,7 +1524,7 @@ async function inventorySold(txdate,description,amount,inventory="Finished Goods
  * 
  * Use this helper when you discover actual losses, debit your reserve account and credit inventory by the loss amount.
  */
-async function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_asset="Shrinkage Reserve") {
+async function inventoryShrinkage(txdate,description,amount,asset="Inventory",contra_asset="Shrinkage Reserve",company_id=0,office_id=0) {
     var coa = new ChartOfAccounts();
     coa.add(contra_asset,AccountTypes.ContraAsset);
     coa.add(asset,AccountTypes.Asset);
@@ -1548,15 +1547,15 @@ async function inventoryShrinkage(txdate,description,amount,asset="Inventory",co
  * 
  * ONLY use the COGS if inventory loss is small, otherwise use an Inventory expense
  */
-async function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",contra_asset="Shrinkage Reserve") {
+async function inventoryShrinkageReserve(txdate,description,amount,expense="COGS",contra_asset="Shrinkage Reserve",company_id=0,office_id=0) {
     var coa = new ChartOfAccounts();
     coa.add(contra_asset,AccountTypes.ContraAsset);
     coa.add(expense,AccountTypes.Expense);
 
     var contraAssetAccount = new ContraAsset(contra_asset);
-    contraAssetAccount.decrease(txdate,description,amount);
-
     var expenseAccount = new Expense(expense);
+
+    contraAssetAccount.decrease(txdate,description,amount);
     expenseAccount.increase(txdate,description,amount);
 }
 async function initializeEquity() {
@@ -1580,7 +1579,7 @@ async function initializeEquity() {
  * @param {number} amount
  * @param {string} account
  */
-async function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
+async function salesViaPaypal(txdate,description,amount,fee,account="Sales",company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Revenue");
@@ -1591,16 +1590,16 @@ async function salesViaPaypal(txdate,description,amount,fee,account="Sales") {
 		sales.increase(txdate, description, Number(amount + fee));
 
 		var ar = new Asset("Paypal");
-		ar.increase(txdate, description, amount);
-
         var fees = new Expense("Bank Fee");
+
+        ar.increase(txdate, description, amount);
         fees.increase(txdate,`Paypal fee for: ${description}`,fee);
     } catch(err) {
         error(JSON.stringify(err));
     }
 }
 
-async function commissionPayable(txdate,description,amount) {
+async function commissionPayable(txdate,description,amount,company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add("Commission Expense","Expense");
@@ -1609,8 +1608,8 @@ async function commissionPayable(txdate,description,amount) {
         var commission_payable = new Liability("Commission Payable");
         var commission_expense = new Expense("Commission Expense");
 
-        commission_expense.addDebit(txdate,description,amount);
-        commission_payable.addCredit(txdate,description,amount);
+        commission_expense.addDebit(txdate,description,amount,company_id,office_id);
+        commission_payable.addCredit(txdate,description,amount,company_id,office_id);
 
     } catch(err) {
         console.error(err)
@@ -1625,7 +1624,7 @@ async function commissionPayable(txdate,description,amount) {
  * @param {*} amount 
  * @param {*} asset 
  */
-async function commissionPaid(txdate,description,amount,asset="Cash") {
+async function commissionPaid(txdate,description,amount,asset="Cash",company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add("Commission Expense","Expense");
@@ -1636,10 +1635,9 @@ async function commissionPaid(txdate,description,amount,asset="Cash") {
         var commission_expense = new Expense("Commission Expense");
         var asset_account = new Asset(asset);
 
-        commission_payable.addDebit(txdate,description,amount);
-        commission_expense.addCredit(txdate,description,amount);
-        commission_expense.addDebit(txdate,description,amount);
-        asset_account.addCredit(txdate,description,amount);
+        commission_payable.addDebit(txdate,description,amount,company_id,office_id);
+        commission_expense.addDebit(txdate,description,amount,company_id,office_id);
+        asset_account.addCredit(txdate,description,amount,company_id,office_id);
 
     } catch(err) {
         console.error(err)
@@ -1684,7 +1682,7 @@ async function commissionPaid(txdate,description,amount,asset="Cash") {
  * Always consult with your accounting department or a certified accountant to ensure accurate and compliant bookkeeping for your business.
  */
 
-async function allocateFundingAccount(txdate,description,amount,asset="Cash",equity="FundingAllocation",expense="ApprovalRequest") {
+async function allocateFundingAccount(txdate,description,amount,asset="Cash",equity="FundingAllocation",expense="ApprovalRequest",company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add(asset,"Cash");
@@ -1703,7 +1701,7 @@ async function allocateFundingAccount(txdate,description,amount,asset="Cash",equ
     }
 }
 
-async function spendFundingAccount(txdate,description,amount,payable="AccountPayable",equity="FundingAllocation",expense="ApprovalRequest") {
+async function spendFundingAccount(txdate,description,amount,payable="AccountPayable",equity="FundingAllocation",expense="ApprovalRequest",company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add(payable,"AccountPayable");
@@ -1777,7 +1775,7 @@ FROM accounts  a WHERE a.company_id=1
  * Keep in mind that accounting for cryptocurrency transactions can be complex due to the volatility of cryptocurrency values and regulatory considerations. 
  */
 
-async function softwareLicense(xdate,description,amount,fee,company_id=0,office_id=0) {
+async function softwareLicense(txdate,description,amount,fee,company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add("Cryptocurrency", "Asset");
@@ -1790,11 +1788,11 @@ async function softwareLicense(xdate,description,amount,fee,company_id=0,office_
         var transaction_fee = new Expense("Transaction Fee");
         var account_receivable = new Expense("Asset");
 
-        cryptocurrency.addDebit(date,description,amount,company_id,office_id);
-        sales.addCredit(date,description,amount,company_id,office_id);
-        account_receivable.addCredit(date,description,amount,company_id,office_id);
-        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
-        cryptocurrency.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+        cryptocurrency.addDebit(txdate,description,amount,company_id,office_id);
+        sales.addCredit(txdate,description,amount,company_id,office_id);
+        account_receivable.addCredit(txdate,description,amount,company_id,office_id);
+        transaction_fee.addDebit(txdate,`fee for ${description}`,fee,company_id,office_id);
+        cryptocurrency.addCredit(txdate,`fee for ${description}`,fee,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1833,7 +1831,7 @@ async function softwareLicense(xdate,description,amount,fee,company_id=0,office_
  * as accounting treatment may vary based on specific circumstances and regulations. Additionally, fair value adjustments may be necessary 
  * if there are significant fluctuations in the value of the cryptocurrency.
  */
-async function exchangeCryptocurrencyToUSD(date,description,amount,fee,gainLoss=0,account='Cash',company_id=0,office_id=0) {
+async function exchangeCryptocurrencyToUSD(txdate,description,amount,fee,gainLoss=0,account='Cash',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add("Cryptocurrency", "Asset");
@@ -1844,15 +1842,15 @@ async function exchangeCryptocurrencyToUSD(date,description,amount,fee,gainLoss=
         var transaction_fee = new Expense("Transaction Fee");
         var debitAccount = new Expense(account);
 
-        debitAccount.addDebit(date,description,amount,company_id,office_id);
-        cryptocurrency.addCredit(date,description,amount,company_id,office_id);
+        debitAccount.addDebit(txdate,description,amount,company_id,office_id);
+        cryptocurrency.addCredit(txdate,description,amount,company_id,office_id);
         if (gainLoss > 0) {
-            cryptocurrency.addDebit(date,`gain from ${description}`,gainLoss,company_id,office_id);
+            cryptocurrency.addDebit(txdate,`gain from ${description}`,gainLoss,company_id,office_id);
         } else if (gainLoss < 0) {
-            cryptocurrency.addCredit(date,`loss from ${description}`,gainLoss,company_id,office_id);
+            cryptocurrency.addCredit(txdate,`loss from ${description}`,gainLoss,company_id,office_id);
         }
-        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
-        debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+        transaction_fee.addDebit(txdate,`fee for ${description}`,fee,company_id,office_id);
+        debitAccount.addCredit(txdate,`fee for ${description}`,fee,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1884,7 +1882,7 @@ async function exchangeCryptocurrencyToUSD(date,description,amount,fee,gainLoss=
  * It's important to consult with an accountant or financial professional when recording cryptocurrency transactions, as accounting treatment may vary based on specific circumstances and regulations. 
  * Additionally, fair value adjustments may be necessary if there are significant fluctuations in the value of the cryptocurrency.
  */
-async function exchangeUSDToCryptocurrency(date,description,amount,fee,account='Cash',company_id=0,office_id=0) {
+async function exchangeUSDToCryptocurrency(txdate,description,amount,fee,account='Cash',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add("Cryptocurrency", "Asset");
@@ -1895,10 +1893,10 @@ async function exchangeUSDToCryptocurrency(date,description,amount,fee,account='
         var transaction_fee = new Expense("Transaction Fee");
         var debitAccount = new Expense(account);
 
-        cryptocurrency.addDebit(date,description,amount,company_id,office_id);
-        debitAccount.addCredit(date,description,amount,company_id,office_id);
-        transaction_fee.addDebit(date,`fee for ${description}`,fee,company_id,office_id);
-        debitAccount.addCredit(date,`fee for ${description}`,fee,company_id,office_id);
+        cryptocurrency.addDebit(txdate,description,amount,company_id,office_id);
+        debitAccount.addCredit(txdate,description,amount,company_id,office_id);
+        transaction_fee.addDebit(txdate,`fee for ${description}`,fee,company_id,office_id);
+        debitAccount.addCredit(txdate,`fee for ${description}`,fee,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -1930,19 +1928,19 @@ async function exchangeUSDToCryptocurrency(date,description,amount,fee,account='
  * Accounts Receivable      Type: Debit (Asset account)
  * Bank Account             Type: Debit (Asset account)
  */
-async function googleAdsenseEarning(date,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
+async function googleAdsenseEarning(txdate,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Revenue");
 
         var adsense = new Revenue(account);
-        addCredit(adsense,date,description,amount,company_id,office_id);
+        addCredit(adsense,txdate,description,amount,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
 }
 
-async function googleAdsensePayout(date,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
+async function googleAdsensePayout(txdate,description,amount,account='Google Adsense Revenue',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Revenue");
@@ -1951,15 +1949,15 @@ async function googleAdsensePayout(date,description,amount,account='Google Adsen
         var adsense = new Revenue(account);
         var ar = new Asset("Account Receivables")
 
-        addDebit(adsense,date,description,amount,company_id,office_id);
-        addCredit(ar,date,description,amount,company_id,office_id);
+        addDebit(adsense,txdate,description,amount,company_id,office_id);
+        addCredit(ar,txdate,description,amount,company_id,office_id);
 
     } catch(err) {
         error(JSON.stringify(err));
     }
 }
 
-async function googleAdsenseReceivePayout(date,description,amount,account='Bank',company_id=0,office_id=0) {
+async function googleAdsenseReceivePayout(txdate,description,amount,account='Bank',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Bank");
@@ -1968,8 +1966,8 @@ async function googleAdsenseReceivePayout(date,description,amount,account='Bank'
         var bank = new Bank(account);
         var ar = new Asset("Account Receivables")
 
-        addDebit(ar,date,description,amount,company_id,office_id);
-        addCredit(bank,date,description,amount,company_id,office_id);
+        addDebit(ar,txdate,description,amount,company_id,office_id);
+        addCredit(bank,txdate,description,amount,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -2020,7 +2018,7 @@ These entries ensure that the transactions are accurately recorded, reflecting b
  * @param {*} company_id 
  * @param {*} office_id 
  */
-async function addFundsToPostageDebitAccount(date,description,amount,account='Bank',company_id=0,office_id=0) {
+async function addFundsToPostageDebitAccount(txdate,description,amount,account='Bank',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Bank");
@@ -2029,8 +2027,8 @@ async function addFundsToPostageDebitAccount(date,description,amount,account='Ba
         var bank = new Bank(account);
         var postage = new Asset("Postage Debit Account");
 
-        addDebit(postage,date,description,amount,company_id,office_id);
-        addCredit(bank,date,description,amount,company_id,office_id);
+        addDebit(postage,txdate,description,amount,company_id,office_id);
+        addCredit(bank,txdate,description,amount,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -2049,7 +2047,7 @@ async function addFundsToPostageDebitAccount(date,description,amount,account='Ba
  * @param {*} company_id 
  * @param {*} office_id 
  */
-async function postageExpense(date,description,amount,account='Postage Expense Account',company_id=0,office_id=0) {
+async function postageExpense(txdate,description,amount,account='Postage Expense Account',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(account, "Expense");
@@ -2058,14 +2056,14 @@ async function postageExpense(date,description,amount,account='Postage Expense A
         var postageExpense = new Expense(account);
         var postageDebit = new Asset("Postage Debit Account");
 
-        addDebit(postageExpense,date,description,amount,company_id,office_id);
-        addCredit(postageDebit,date,description,amount,company_id,office_id);
+        addDebit(postageExpense,txdate,description,amount,company_id,office_id);
+        addCredit(postageDebit,txdate,description,amount,company_id,office_id);
     } catch(err) {
         error(JSON.stringify(err));
     }
 }
 
-async function pendingPurchase(date,description,amount,expense='Expense Account',company_id=0,office_id=0) {
+async function pendingPurchase(txdate,description,amount,expense='Expense Account',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
 		coa.add(expense, "Expense");
@@ -2074,14 +2072,14 @@ async function pendingPurchase(date,description,amount,expense='Expense Account'
         var expenseAccount = new Expense(expense);
         var pendingPurchases = new Liability("Pending Purchases");
 
-        addDebit(expenseAccount,date,description,amount,company_id,office_id);
-        addCredit(pendingPurchases,date,description,amount,company_id,office_id)
+        addDebit(expenseAccount,txdate,description,amount,company_id,office_id);
+        addCredit(pendingPurchases,txdate,description,amount,company_id,office_id)
     } catch(err) {
         error(JSON.stringify(err))
     }
 }
 
-async function pendingPurchaseCleared(date,description,amount,bank='Bank',company_id=0,office_id=0) {
+async function pendingPurchaseCleared(txdate,description,amount,bank='Bank',company_id=0,office_id=0) {
     try {
 		var coa = new ChartOfAccounts();
         coa.add(bank,"Bank");
@@ -2090,15 +2088,15 @@ async function pendingPurchaseCleared(date,description,amount,bank='Bank',compan
         var bankAccount = new Bank(bank);
         var pendingPurchases = new Liability("Pending Purchases");
 
-        addDebit(pendingPurchases,date,description,amount,company_id,office_id);
-        addCredit(bankAccount,date,description,amount,company_id,office_id)
+        addDebit(pendingPurchases,txdate,description,amount,company_id,office_id);
+        addCredit(bankAccount,txdate,description,amount,company_id,office_id)
     } catch(err) {
         error(JSON.stringify(err))
     }
 }
 
-async function pendingPurchaseSettled(date,description,amount,bank='Bank',company_id=0,office_id=0) {
-    pendingPurchaseCleared(date,description,amount,bank,company_id,office_id);
+async function pendingPurchaseSettled(txdate,description,amount,bank='Bank',company_id=0,office_id=0) {
+    pendingPurchaseCleared(txdate,description,amount,bank,company_id,office_id);
 }
 
 

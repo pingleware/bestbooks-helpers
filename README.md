@@ -100,6 +100,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * workingHours
 
 ## accountsReceivablePayment
+
 Example 12: Company Receives Payment on an Invoice
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
@@ -109,7 +110,14 @@ Debit Cash (increases the balance)
 
 Credit A/R (decreases the balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## accruedExpense
+
 Example 20: Accrued Expense
 
 When a company has an expense but has not paid, and recorded as an adjusting entry
@@ -119,7 +127,15 @@ https://www.accountingtools.com/articles/what-are-accrued-expenses.html
 Expense account is debited (balance is increasing)
 Payable account is credited (balance is increasing)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+
 ## accruedIncome
+
 Example 19: Accrued Income
 When a company has earned income but has not received the monies, that are NOT from Sales
 
@@ -128,7 +144,15 @@ https://accounting-simplified.com/financial/accrual-accounting/accrued-income
 Income Receivable is debited (increases the balance)
 Income account is credited (increases the balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+
 ## accruedIncomePayment
+
 Example 19.1: Receipt of Payment on Accrued Income
 
 When payment is due, and the customer makes the payment, an accountant for that company would record an adjustment to accrued revenue. The accountant would make an adjusting journal entry in which the amount of cash received by the customer would be debited to the cash account on the balance sheet, and the same amount of cash received would be credited to the accrued revenue account or accounts receivable account, reducing that account.
@@ -136,32 +160,181 @@ When payment is due, and the customer makes the payment, an accountant for that 
 Cash Account is debited (increases the balance)
 Income Receivable is credited (decreases the balamce)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+
 ## accruedInterest
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## addCredit
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## addDebit
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## addFundsToPostageDebitAccount
+To record the transactions involving the CFO transferring funds to the postage debit account and the subsequent deductions for each letter or package sent by the mailroom, you would typically use a double-entry bookkeeping system. Here's how you might record these transactions:
+
+1. **Initial Transfer from CFO to Postage Debit Account:**
+   
+   Debit: Postage Debit Account
+   Credit: Cash/Bank Account
+
+   This entry reflects the transfer of funds from the CFO to the postage debit account.
+
+2. **Cost Deduction for Sending Mail:**
+
+   Debit: Postage Expense Account
+   Credit: Postage Debit Account
+
+   This entry records the expense incurred by the mailroom for sending mail. The amount is deducted from the postage debit account.
+
+Let's say, for example, the CFO transfers $1,000 to the postage debit account initially, and then the mailroom sends a package costing $50 in postage:
+
+1. **Initial Transfer Entry:**
+   
+   Debit: Postage Debit Account ($1,000)
+   Credit: Cash/Bank Account ($1,000)
+
+2. **Cost Deduction Entry for Sending Mail:**
+
+   Debit: Postage Expense Account ($50)
+   Credit: Postage Debit Account ($50)
+
+These entries ensure that the transactions are accurately recorded, reflecting both the transfer of funds and the associated expenses incurred by the mailroom.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##       |
+| account      | String | Funding account, default: Bank                                     |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## addJournalTransaction
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## addTransaction
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## addTransactionSync
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| debit      | Number | The debit amount of the transaction in 2-digit decimal format, #.##      |
+| credit      | Number | The credit amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## allocateFundingAccount
 
+In a double-entry accounting system, when allocating funds for a new approval request, you typically use the following ledger accounts:
+
+1. Cash/Bank Account: This account tracks the cash or bank balance available in your organization. When funds are allocated for the new approval request,
+   you'll debit this account to record the increase in the available funds.
+2. Funding Allocation Account: This account is used to record the allocation of funds for specific purposes, projects, or approval requests.
+   You'll credit this account to indicate that funds have been allocated for the new request.
+3. Expense/Approval Request Account: This account tracks the expenses or costs associated with the approval requests.
+   When the approval request is approved and the allocated funds are spent, you'll debit this account to record the expense.
+
+Let's illustrate the double-entry accounting entries for allocating funds for a new approval request:
+
+1. Initial Balance:
+
+   - Cash/Bank Account: $10,000 (Debit)
+   - Funding Allocation Account: $0 (Credit)
+   - Approval Request Account: $0 (Credit)
+   - Payment Account: $0 (Credit)
+2. Funding Allocation for New Approval Request:
+
+   - Cash/Bank Account: $10,000 (Debit)
+   - Funding Allocation Account: $1,000 (Credit)
+   - Approval Request Account: $0 (Credit)
+   - Payment Account: $0 (Credit)
+3. When the Approval Request is Approved and Funds are Spent:
+
+   - Cash/Bank Account: $9,000 (Debit) -> Actual cash spent on the approval request
+   - Funding Allocation Account: $0 (Debit) -> Funds used up
+   - Approval Request Account: $1,000 (Debit) -> Expense incurred
+   - Payment Account: $1,000 (Credit) -> Payment made for the approval request
+
+The Payment Account is used to record the payment made (credit entry) when funds are spent for the approved approval request. This completes the accounting entries, showing the flow of funds from the Cash/Bank Account to the Funding Allocation Account, Approval Request Account, and finally, to the Payment Account.
+
+Please note that the specific account names and chart of accounts might vary based on your organization's accounting system and practices. Always consult with your accounting department or a certified accountant to ensure accurate and compliant bookkeeping for your business.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## asset
 
+Debit Accounts: Assets & Expenses
+From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
+
+Because Asset and Expense accounts maintain positive balances, they are positive, or debit accounts. Accounting books will say “Accounts that normally have a positive balance are increased with a Debit and decreased with a Credit.” Of course they are! Look at the number line. If you add a positive number (debit) to a positive number, you get a bigger positive number. But if you start with a positive number and add a negative number (credit), you get a smaller positive number (you move left on the number line).
+The asset account called Cash, or the checking account, is unique in that it routinely receives debits and credits, but its goal is to maintain a positive balance!
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
+
 ## badDebt
+
 Example 18: Accounting for Bad Debt
 If a company sells on credit, customers will occasionally be unable to pay, in which case the seller should charge the account receivable to expense as a bad debt
 
 https://www.accountingtools.com/articles/2017/5/17/accounts-receivable-accounting
 
-Bad Debt expense account debited 
+Bad Debt expense account debited
 Account Receivable is credited
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 
 ## bankfee
 
@@ -174,68 +347,207 @@ Debit Bank Fees (increases its balance)
 
 Credit Cash (decreases its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
+
 ## bondDiscount
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## bondPremium
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## bondPremiumInterestPayment
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## bondsIssuedWOAccruedInterest
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## bondsIssuedWithAccruedInteres
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## cardPayment
+
 Example 8: Company Pays the Credit Card Bill
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
 You pay the bill for the $318 of office supplies purchased in Example 7. Analysis: When the bill was entered, an expense account called Office (or similar) was debited and Accounts Payable was credited. Now as we write a check to pay the bill, BestBooks will automatically credit Cash. And the accounting software will debit Accounts Payable - in effect, reversing the earlier credit.
 
 Debit Accounts Payable (decreases its balance)
- 
+
 Credit Cash (decrease its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## cashDividendDeclared
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## cashDividendPayable
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## cashPayment
+
 Example 9: Company Pays Cash for a Cost of Good Sold (COGS)
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
 The Company pays $450 cash for Product A - a COGS part.   Analysis: When you write the check, BestBooks will automatically credit Cash. In the check window, choose the COGS account from the Expenses tab, or choose an Item from the Items tab that is associated with the COGS account. Either way, the COGS account receives the debit.
 
 Debit COGS (increase its balance)
-  
+
 Credit Cash (decrease its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## COGS
+
 Costs of Goods Sold
 
 There are the following COGS categories in accordance with the GAAP.
-		
+
 Debit COGS is an Expense (increases it's balance)
 Credit Purchases is a Liability (decrease it's balance)
 Credit Inventory is an Asset (increase or decrease based on the amount)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## commissionPaid
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## commissionPayable
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## createAccount
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## createNewUser
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## deferredExpense
+Deferred Expense
+
+Like deferred revenues, deferred expenses are not reported on the income statement. 
+Instead, they are recorded as an asset on the balance sheet until the expenses are incurred. 
+As the expenses are incurred the asset is decreased and the expense is recorded on the 
+income statement.
+
+The (Asset account) is increasing, and Cash (Asset account) is decreasing.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## deferredRevenue
+
 Deferred Revenue
 
-Since deferred revenues are not considered revenue until they are earned, they are not reported on the income statement.  Instead they are reported on the balance sheet 
+Since deferred revenues are not considered revenue until they are earned, they are not reported on the income statement.  Instead they are reported on the balance sheet
 as a liability. As the income is earned, the liability is decreased and recognized as income.
 
 the Cash (Asset account) and the Unearned Revenue (Liability account) are increasing.
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## distribution
+
 Example 13: Owner Takes Money Out of the Company - a Distribution
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
@@ -245,21 +557,59 @@ Debit Owner’s Draw (increases its balance)
 
 Credit Cash (decrease its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## dividendDeclared
+
 Dividends Payable
 
 See https://www.wallstreetprep.com/knowledge/dividends-payable/
-Cash Dividend Declared: 
+Cash Dividend Declared:
      Debit (decrease) -> Retained Earnings (Equity)
      Credit (increase) => Dividends Payable (Liability)
 
 Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asset)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## dividendPaid
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## editJournalTransaction
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## editTransaction
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## encumber
 
@@ -272,6 +622,14 @@ crediting the Liability account increases its negative balance by $8,000 (moves 
 Debit Cash (increases its balance)
 
 Credit Loans Payable (increases its balance)
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## equity
 
@@ -287,7 +645,55 @@ value - an undesirable event. A negative account might reach zero - such as a lo
 
 [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a minus sign on a number you enter into the accounting software.]
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## exchangeCryptocurrencyToUSD
+When you exchange cryptocurrency for USD (U.S. Dollars), you'll need to record the transaction in your accounting records. Here's a general example based on accrual accounting principles:
+
+1. Record the Sale of Cryptocurrency:
+   - Debit: Cash (or Bank Account) - to increase the USD balance
+   - Credit: Cryptocurrency Asset - to decrease the value of the cryptocurrency being sold
+
+2. Recognize Gain or Loss:
+   If there is a gain or loss on the exchange due to changes in the value of the cryptocurrency, you may need to recognize it:
+   - Debit or Credit: Gain or Loss on Cryptocurrency Exchange - to capture any difference between the value of the cryptocurrency when acquired and its value when exchanged
+
+3. Record Any Transaction Fees:
+   If there are fees associated with the cryptocurrency exchange, record them separately:
+   - Debit: Transaction Fees Expense
+   - Credit: Cash (or Bank Account) - to reduce the amount received
+
+Here's an example of the journal entry:
+
+
+| Account                                 | Debit ($)  | Credit ($) |
+|-----------------------------------------|------------|------------|
+| Cash or Bank Account                    | XXXX       |            |
+| Cryptocurrency Asset                    |            | XXXX       |
+| Gain or Loss on Cryptocurrency Exchange |  (or)      |  (or)      |
+| Transaction Fees Expense                | XXXX       |            |
+
+
+Please note that the specific accounts and amounts will depend on the details of your transaction, such as the amount of cryptocurrency exchanged, any fees incurred, 
+and whether there is a gain or loss on the exchange.
+
+It's essential to consult with an accountant or financial professional, especially when dealing with cryptocurrency transactions, 
+as accounting treatment may vary based on specific circumstances and regulations. Additionally, fair value adjustments may be necessary 
+if there are significant fluctuations in the value of the cryptocurrency.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## exchangeUSDToCryptocurrency
 
@@ -316,11 +722,47 @@ Please note that the specific accounts and amounts will depend on the details of
 It's important to consult with an accountant or financial professional when recording cryptocurrency transactions, as accounting treatment may vary based on specific circumstances and regulations.
 Additionally, fair value adjustments may be necessary if there are significant fluctuations in the value of the cryptocurrency.
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## expense
 
+Debit Accounts: Assets & Expenses
+From: https://www.keynotesupport.com/accounting/accounting-basics-debits-credits.shtml
+
+Because Asset and Expense accounts maintain positive balances, they are positive, or debit accounts. Accounting books will say “Accounts that normally have a positive balance are increased with a Debit and decreased with a Credit.” Of course they are! Look at the number line. If you add a positive number (debit) to a positive number, you get a bigger positive number. But if you start with a positive number and add a negative number (credit), you get a smaller positive number (you move left on the number line).
+The asset account called Cash, or the checking account, is unique in that it routinely receives debits and credits, but its goal is to maintain a positive balance!
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## getTransactions
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## getUsersByType
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## googleAdsenseEarning
 
@@ -351,27 +793,119 @@ Note: Ensure to record the transactions accurately, with appropriate dates and a
 | Accounts Receivable     | Debit  | Asset   |
 | Bank Account            | Debit  | Asset   |
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## googleAdsensePayout
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## googleAdsenseReceivePayout
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## initializeEquity
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## interestExpense
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## inventoryFinishedGoods
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## inventoryPurchase
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## inventoryRawMaterials
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
 
 ## inventoryShrinkage
 
+Inventory Shrinkage
+See https://yourbusiness.azcentral.com/accounting-treatment-restaurant-spoilage-27516.html
+
+In a cottage food kitchen, which may be licensed as a home-based food manufacturer, inventory shrinkage through expired or spoilage is inevitable. The reason for Inventory shrinkage is the general term for lost, stolen, damaged, spoiled, or expired inventory should be provided in the description. Use this helper when you discover actual losses, debit your reserve account and credit inventory by the loss amount.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
 ## inventoryShrinkageReserve
 
+Shrinkage Reserve
+
+Generally accepted accounting principles require you to match expenses to the periods in which they occur. For this reason, companies might establish special reserve accounts for shrinkage losses. You first must estimate your shrinkage loss at the beginning of the period. Credit a contra-asset account with a name like “allowance for inventory losses” or “shrinkage reserve” for your estimated loss, and debit an expense account or COGS for the same amount. When you discover actual losses, debit your reserve account and credit inventory by the loss amount.
+
+ONLY use the COGS if inventory loss is small, otherwise use an Inventory expense
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## inventorySold
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## inventoryWIP
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## investment
 
@@ -383,6 +917,12 @@ Owner invests $5,000.   Analysis: Since money is deposited into the checking acc
 Debit Cash (increase its balance)
 
 Credit Owner’s Equity|Capital (increases its balance)
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## isJournalInbalance
 
@@ -400,6 +940,12 @@ value - an undesirable event. A negative account might reach zero - such as a lo
 
 [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a minus sign on a number you enter into the accounting software.]
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## loanPayment
 
 Example 4: Making a Loan Payment
@@ -413,7 +959,18 @@ Debit Interest Expense $40 (increases its balance)
 
 Credit Cash $540 (decreases its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## paidInCapitalStock
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## payAssetsByCheck
 
@@ -429,7 +986,18 @@ Credit Cash (decreases its balance)
 [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a
 minus sign on a number you enter into the accounting software.]
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## payAssetsByCredit
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## payExpenseByCard
 
@@ -442,6 +1010,12 @@ Debit Office (increase its balance)
 
 Credit Accounts Payable (increases its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## payExpenseByCheck
 
 Example 6: Company Writes Check to Pay for Expenses
@@ -453,7 +1027,18 @@ Debit Office (increases its balance)
 
 Credit Cash (decreases its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## payrollPayable
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## pendingPurchase
 
@@ -461,6 +1046,12 @@ When the purchase is made and recorded as pending, you debit the relevant expens
 
 Debit: Expense Account
 Credit: Pending Purchases Account
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## pendingPurchaseCleared
 
@@ -471,19 +1062,61 @@ Credit: Pending Purchases Account
 Debit: Pending Purchases Liability Account
 Credit: Bank Account
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## pendingPurchaseSettled
 
 Is a proxy to the pendingPurchaseCleared function.
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## postageExpense
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## prepaidSubscriptions
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## recognizeDeferredExpense
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## recognizeDeferredRevenue
+Recognize Uneaarned Revenue
+
+Once the services are performed, the income can be recognized with the following entry:  
+This entry is decreasing the liability account and increasing revenue.
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## recognizePrepaidSubscription
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## revenue
 
@@ -499,18 +1132,32 @@ value - an undesirable event. A negative account might reach zero - such as a lo
 
 [Remember: A debit adds a positive number and a credit adds a negative number. But you NEVER put a minus sign on a number you enter into the accounting software.]
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## salesCard
+
 Example 11: Company Makes a Credit Card Sale
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
-The Company sells Product A for $650 on credit. Analysis: When you create an invoice, you must specify an Item for each separate charge on the invoice. BestBooks will 
+The Company sells Product A for $650 on credit. Analysis: When you create an invoice, you must specify an Item for each separate charge on the invoice. BestBooks will
 automatically credit the revenue account(s) associated with these Items. And BestBooks will automatically debit the invoice amount to Accounts Receivable.
 
 Debit Accounts Receivable (increases the balance)
 
 Credit Sales (increases the balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## salesCash
+
 Example 10: Company Receives Cash Payment for a Sale
 From: https://www.keynotesupport.com/accounting/accounting-transactions.shtml
 
@@ -520,35 +1167,98 @@ Debit Cash (increases its balance)
 
 Credit Sales (increases its balance)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## salesViaPaypal
 
+Receive sales using paypal, with optional specific account.
+
+For example,
+     You made a sale from a specific website, like a cottage food website, and need to keep track of the total sales does not exceed a maximum as defined by state laws. So sales are recorded in the separate revenue account
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## securityDepositPaid
+Paid:    Cash (Asset) -> Credit (decrease)
+         Security Deposit (Asset) -< Debit (increase) 
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## securityDepositReceived
+
 Security Deposit
 
 Receive: Cash (Asset) -> Debit (increase)
          Refundable Security Deposit (Liability) -> Credit (Increase)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## softwareLicense
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## spendFundingAccount
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## stockDividend
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## stocksIssuedOtherThanCash
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
 ## unearnedRevenue
+
 Example 17: Unearned Revenue
 
 Is income received but not yet earned, e.g. deposits taken on a job not yet performed. Unearned income is applicable for Service Income, while Product Income is regular income
 
 https://www.wallstreetmojo.com/unearned-revenue-journal-entries/
 
-https://www.accountingverse.com/accounting-basics/unearned-revenue.html 
+https://www.accountingverse.com/accounting-basics/unearned-revenue.html
 
 Cash asset account is debited for amount (balance is decreasing)
 
 Unearned Revenue liability account is credited for amount (balance is increasing)
 
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## workingHours
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| hoursPerWeek      | Number | The number of hours in a work week |
