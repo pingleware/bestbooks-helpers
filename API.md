@@ -47,6 +47,8 @@ Income account is credited (increases the balance)
 
 | Argument    | Type   | Comment                                                             |
 | ----------- | ------ | ------------------------------------------------------------------- |
+| accpunt     | String | the income account, default: Income                                 |
+| receivable  | String | the income receivable account, default: Income Receivable           |
 | txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
 | description | String | A description of the transaction                                    |
 | amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
@@ -63,6 +65,8 @@ Income Receivable is credited (decreases the balamce)
 
 | Argument    | Type   | Comment                                                             |
 | ----------- | ------ | ------------------------------------------------------------------- |
+| accpunt     | String | the asset account to receive monies, default: Cash                  |
+| receivable  | String | the accrued income receivable account, default: Income Receivable   |
 | txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
 | description | String | A description of the transaction                                    |
 | amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |

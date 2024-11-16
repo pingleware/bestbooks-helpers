@@ -800,17 +800,17 @@ async function badDebt(txdate, description, amount) {
  * Income Receivable is debited (increases the balance)
  * Income account is credited (increases the balance)
  */
-async function accruedIncome(txdate, description, amount) {
+async function accruedIncome(account="Income",receivable="Income Receivable",txdate, description, amount) {
     try {
-		var coa = new ChartOfAccounts();
-		coa.add("Income Receivable", "Asset");
-		coa.add("Income", "Revenue");
+		const coa = new ChartOfAccounts();
+		coa.add(receivable, "Asset");
+		coa.add(account, "Revenue");
 
-		var income = new Income("Income");
-		income.increase(txdate, description, amount);
+		const income = new Income(account);
+		await income.increase(txdate, description, amount);
 
-		var ir = new Asset("Income Receivable");
-		ir.increase(txdate, description, amount);
+		const ir = new Asset(receivable);
+		await ir.increase(txdate, description, amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -826,17 +826,17 @@ async function accruedIncome(txdate, description, amount) {
  * Cash Account is debited (increases the balance)
  * Income Receivable is credited (decreases the balamce)
  */
-async function accruedIncomePayment() {
+async function accruedIncomePayment(account="Cash",receivable="Income Receivable",txdate, description, amount) {
     try {
-		var coa = new ChartOfAccounts();
-		coa.add("Income Receivable", "Asset");
-		coa.add("Cash","Asset");
+		const coa = new ChartOfAccounts();
+		coa.add(receivable, "Asset");
+		coa.add(account,"Asset");
 
-		var ir = new Asset("Income Receivable");
-		ir.decrease(txdate, description, amount);
+		const ir = new Asset(receivable);
+		await ir.decrease(txdate, description, amount);
 
-		var cash = new Asset("Cash");
-		cash.increase(txdate, description, amount);
+		const cash = new Asset(account);
+		await cash.increase(txdate, description, amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
@@ -853,15 +853,15 @@ async function accruedIncomePayment() {
  */
 async function accruedExpense(expense,payable,txdate,description,amount) {
     try {
-		var coa = new ChartOfAccounts();
-		coa.add($expense, "Asset");
-		coa.add($payable, "Liability");
+		const coa = new ChartOfAccounts();
+		coa.add(expense, "Asset");
+		coa.add(payable, "Liability");
 
-		var expense_account = new Asset(expense);
-		expense_account.increase(txdate, description, amount);
+		const expense_account = new Asset(expense);
+		await expense_account.increase(txdate, description, amount);
 
-		var payable_account = new Liability(payable);
-		payable_account.increase(txdate, description, amount);
+		const payable_account = new Liability(payable);
+		await payable_account.increase(txdate, description, amount);
     } catch(err) {
         error(JSON.stringify(err));
     }
