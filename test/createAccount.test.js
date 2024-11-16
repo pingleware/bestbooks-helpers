@@ -1,5 +1,5 @@
 const assert = require('assert');
-    const createAccount = require('../index');
+    const {createAccount} = require('../index');
     const {
       Model,
     } = require("@pingleware/bestbooks-core");
@@ -7,9 +7,11 @@ const assert = require('assert');
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     
     describe('createAccount Testing', () => {
-      let model;
+      let model, date, dateString;
 
       before(async()=>{
+        date = new Date().toISOString().split("T")[0];
+        dateString = new Date().toDateString();
         model = new Model();
       })
 
@@ -35,13 +37,73 @@ const assert = require('assert');
         assert.ok(createAccount, 'createAccount should be defined');
       });
 
-      // TODO: insert specific test case for the helper function below
-
-      // TODO: add specific test case verification to confirm ledger modification
-      // delete if not applicable
-      it("should show ledger contents",async()=>{
-        const model = new Model();
-        const result = await model.querySync("SELECT * FROM ledger");
-        console.log(result)
+      it("should create a Cash account",async()=>{
+        await createAccount("Cash","Cash");
+      })
+        
+      it("should show the accounts table contents",async()=>{
+        const result = await model.querySync("SELECT * FROM accounts");
+        const expected = [
+          {
+            id: 1,
+            created: result[0].created,
+            company_id: null,
+            code: 100,
+            name: 'Cash',
+            type: 'Cash',
+            base_type: 'Asset',
+            Description: null,
+            Bal01: null,
+            Bal02: null,
+            Bal03: null,
+            Bal04: null,
+            Bal05: null,
+            Bal06: null,
+            Bal07: null,
+            Bal08: null,
+            Bal09: null,
+            Bal10: null,
+            Bal11: null,
+            Bal12: null,
+            Bal13: null,
+            Bal14: null,
+            Bal15: null,
+            Bal16: null,
+            Bal17: null,
+            Bal18: null,
+            Bal19: null,
+            Bal20: null,
+            Bal21: null,
+            Bal22: null,
+            Bal23: null,
+            Bal24: null,
+            Bud01: null,
+            Bud02: null,
+            Bud03: null,
+            Bud04: null,
+            Bud05: null,
+            Bud06: null,
+            Bud07: null,
+            Bud08: null,
+            Bud09: null,
+            Bud10: null,
+            Bud11: null,
+            Bud12: null,
+            Bud13: null,
+            Bud14: null,
+            Bud15: null,
+            Bud16: null,
+            Bud17: null,
+            Bud18: null,
+            Bud19: null,
+            Bud20: null,
+            Bud21: null,
+            Bud22: null,
+            Bud23: null,
+            Bud24: null,
+            Budget: null
+          }
+        ];
+        assert.deepStrictEqual(result,expected);
       })
     });

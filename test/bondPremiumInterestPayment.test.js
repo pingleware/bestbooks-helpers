@@ -7,9 +7,11 @@ const assert = require('assert');
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
     
     describe('bondPremiumInterestPayment Testing', () => {
-      let model;
+      let model, date, dateString;
 
       before(async()=>{
+        date = new Date().toISOString().split("T")[0];
+        dateString = new Date().toDateString();
         model = new Model();
       })
 
@@ -39,9 +41,18 @@ const assert = require('assert');
 
       // TODO: add specific test case verification to confirm ledger modification
       // delete if not applicable
-      it("should show ledger contents",async()=>{
-        const model = new Model();
+      it("should show ledger table contents",async()=>{
         const result = await model.querySync("SELECT * FROM ledger");
+        console.log(result)
+      })
+
+      it("should show the journal table contents",async()=>{
+        const result = await model.querySync("SELECT * FROM journal");
+        console.log(result)
+      })
+
+      it("should show the accounts table contents",async()=>{
+        const result = await model.querySync("SELECT * FROM accounts");
         console.log(result)
       })
     });

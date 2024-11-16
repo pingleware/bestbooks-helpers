@@ -83,6 +83,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * payrollPayable
 * pendingPurchase
 * pendingPurchaseCleared
+* pendingPurchaseSettled
 * postageExpense
 * prepaidSubscriptions
 * recognizeDeferredExpense
