@@ -1,5 +1,8 @@
 const assert = require('assert');
-    const accruedIncomePayment = require('../index');
+    const {
+      accruedIncome,
+      accruedIncomePayment,
+    } = require('../index');
     const {
       Model,
     } = require("@pingleware/bestbooks-core");
@@ -38,21 +41,28 @@ const assert = require('assert');
       });
 
       // TODO: insert specific test case for the helper function below
+      it("should add future rent received",async()=>{
+        await accruedIncome("Income","Rent Receivable",date,"Six months expected rent",6000.00);
+      })
+
+      it("should receive the monies from a rent payment",async()=>{
+        await accruedIncomePayment("Cash","Rent Receivable",date,"Receipt of Rent Payment for one month",1000.00);
+      })
 
       // TODO: add specific test case verification to confirm ledger modification
       // delete if not applicable
       it("should show ledger table contents",async()=>{
         const result = await model.querySync("SELECT * FROM ledger");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
 
       it("should show the journal table contents",async()=>{
         const result = await model.querySync("SELECT * FROM journal");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
 
       it("should show the accounts table contents",async()=>{
         const result = await model.querySync("SELECT * FROM accounts");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
     });

@@ -1,5 +1,5 @@
 const assert = require('assert');
-    const salesCard = require('../index');
+    const {salesCard} = require('../index');
     const {
       Model,
     } = require("@pingleware/bestbooks-core");
@@ -43,16 +43,16 @@ const assert = require('assert');
       // delete if not applicable
       it("should show ledger table contents",async()=>{
         const result = await model.querySync("SELECT * FROM ledger");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
 
       it("should show the journal table contents",async()=>{
         const result = await model.querySync("SELECT * FROM journal");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
 
       it("should show the accounts table contents",async()=>{
         const result = await model.querySync("SELECT * FROM accounts");
-        console.log(result)
+        assert.strictEqual(result.length > 0,true);
       })
     });
