@@ -1,30 +1,43 @@
 const fs = require('fs');
 const path = require('path');
+const acorn = require('acorn');
 
+function extractFunctionNames(filePath) {
+  try {
+    const code = fs.readFileSync(filePath, 'utf8');
+    const ast = acorn.parse(code, { ecmaVersion: 2020 });
+    const functionNames = [];
+
+    ast.body.forEach((node) => {
+      if (node.type === 'FunctionDeclaration' && node.id) {
+        // Named function declarations
+        functionNames.push(node.id.name);
+      } else if (node.type === 'VariableDeclaration') {
+        // Arrow functions or function expressions assigned to variables
+        node.declarations.forEach((declaration) => {
+          if (
+            declaration.init &&
+            (declaration.init.type === 'ArrowFunctionExpression' ||
+              declaration.init.type === 'FunctionExpression') &&
+            declaration.id
+          ) {
+            functionNames.push(declaration.id.name);
+          }
+        });
+      }
+    });
+
+    return functionNames;
+  } catch (err) {
+    console.error('Error reading or parsing the file:', err);
+    return [];
+  }
+}
+
+
+const indexPath = path.resolve(__dirname, 'index.js');
 // List of module names
-const modules = [
-  "accountsReceivablePayment", "accruedExpense", "accruedIncome", "accruedIncomePayment",
-  "accruedInterest", "addCredit", "addDebit", "addFundsToPostageDebitAccount", 
-  "addJournalTransaction", "addTransaction", "addTransactionSync", "allocateFundingAccount", 
-  "asset", "badDebt", "bankfee", "bondDiscount", "bondPremium", "bondPremiumInterestPayment", 
-  "bondsIssuedWOAccruedInterest", "bondsIssuedWithAccruedInteres", "cardPayment", 
-  "cashDividendDeclared", "cashDividendPayable", "cashPayment", "COGS", "commissionPaid", 
-  "commissionPayable", "createAccount", "createNewUser", "deferredExpense", "deferredRevenue", 
-  "distribution", "dividendDeclared", "dividendPaid", "editJournalTransaction", 
-  "editTransaction", "encumber", "equity", "exchangeCryptocurrencyToUSD", 
-  "exchangeUSDToCryptocurrency", "expense", "getTransactions", "getUsersByType", 
-  "googleAdsenseEarning", "googleAdsensePayout", "googleAdsenseReceivePayout", 
-  "initializeEquity", "interestExpense", "inventoryFinishedGoods", "inventoryPurchase", 
-  "inventoryRawMaterials", "inventoryShrinkage", "inventoryShrinkageReserve", "inventorySold", 
-  "inventoryWIP", "investment", "isJournalInbalance", "liability", "loanPayment", 
-  "paidInCapitalStock", "payAssetsByCheck", "payAssetsByCredit", "payExpenseByCard", 
-  "payExpenseByCheck", "payrollPayable", "pendingPurchase", "pendingPurchaseCleared", 
-  "postageExpense", "prepaidSubscriptions", "recognizeDeferredExpense", 
-  "recognizeDeferredRevenue", "recognizePrepaidSubscription", "revenue", "salesCard", 
-  "salesCash", "salesViaPaypal", "securityDepositPaid", "securityDepositReceived", 
-  "softwareLicense", "spendFundingAccount", "stockDividend", "stocksIssuedOtherThanCash", 
-  "unearnedRevenue", "workingHours"
-];
+const modules = extractFunctionNames(indexPath);
  
 // Directory to save .test.js files
 const testDirectory = './test';
