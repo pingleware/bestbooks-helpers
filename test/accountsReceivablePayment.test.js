@@ -1,0 +1,3 @@
+describe("accountsReceivablePayment Testing",async() => {
+    
+})

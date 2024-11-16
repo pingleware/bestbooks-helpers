@@ -4,7 +4,7 @@
   "description": "Helper routines for BestBooks Accounting Application Framework",
   "main": "index.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha --sort --timeouts 3000"
   },
   "keywords": [
     "bestbooks",
@@ -24,10 +24,9 @@
   },
   "engineStrict": true,
   "devDependencies": {
-    "chai": "^4.3.7",
     "mocha": "^10.1.0"
   },
   "dependencies": {
-    "@pingleware/bestbooks-core": "^1.1.18"
+    "@pingleware/bestbooks-core": "^1.2.3"
   }
 }
