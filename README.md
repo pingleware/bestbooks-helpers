@@ -102,4 +102,4 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * workingHours
 
 ## Documentation
-[API.md](API.md)
+[API.md](https://github.com/pingleware/bestbooks-helpers/blob/master/API.md)
