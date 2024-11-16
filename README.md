@@ -1,5 +1,7 @@
 # BestBooks Accounting Application Framework - HELPERS
 
+[![npm test](https://github.com/pingleware/bestbooks-helpers/actions/workflows/npm-test.yml/badge.svg)](https://github.com/pingleware/bestbooks-helpers/actions/workflows/npm-test.yml)
+
 The helper functions (aka hooks under WordPress) provide simpler interaction with the framework
 
 # Dependency
