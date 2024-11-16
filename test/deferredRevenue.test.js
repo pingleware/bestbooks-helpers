@@ -35,6 +35,10 @@ const assert = require('assert');
         assert.ok(deferredRevenue, 'deferredRevenue should be defined');
       });
 
+      // TODO: insert specific test case for the helper function below
+
+      // TODO: add specific test case verification to confirm ledger modification
+      // delete if not applicable
       it("should show ledger contents",async()=>{
         const model = new Model();
         const result = await model.querySync("SELECT * FROM ledger");
