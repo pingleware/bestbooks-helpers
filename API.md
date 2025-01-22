@@ -608,6 +608,7 @@ In dynamic pricing models, **sensitivity**, **urgencyFactor**, and **environment
 - **Electricity prices** rise during extreme weather. **Subject to PRICE GOUGING laws**
 
 [Price gouging laws by state](https://www.findlaw.com/consumer/consumer-transactions/price-gouging-laws-by-state.html)
+
 [The Defense Production Act of 1950](https://www.fema.gov/sites/default/files/2020-03/Defense_Production_Act_2018.pdf)
 
 The Defense Production Act of 1950 govern price gouging at the federal level.
