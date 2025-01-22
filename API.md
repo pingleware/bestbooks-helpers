@@ -500,7 +500,7 @@ Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asse
 
 ## DynamicPricing
 Is a class to calculate the DynamicPricing based on supply and demand with the inclusion of specialized industries of
-retail, saas, airling, gig and utility.
+retail, saas, airling, gig and energy.
 
 constructor
 | Argument    | Type   | Comment                                                             |
@@ -604,8 +604,13 @@ In dynamic pricing models, **sensitivity**, **urgencyFactor**, and **environment
   - **> 1.0** → Prices rise due to external pressures (e.g., inflation, high energy costs, supply chain issues).  
 
 🔹 **Example Use Case**:  
-- **Grocery prices** increase due to supply chain disruptions.  
-- **Electricity prices** rise during extreme weather.
+- **Grocery prices** increase due to supply chain disruptions. **Subject to PRICE GOUGING laws**
+- **Electricity prices** rise during extreme weather. **Subject to PRICE GOUGING laws**
+
+[Price gouging laws by state](https://www.findlaw.com/consumer/consumer-transactions/price-gouging-laws-by-state.html)
+[The Defense Production Act of 1950](https://www.fema.gov/sites/default/files/2020-03/Defense_Production_Act_2018.pdf)
+
+The Defense Production Act of 1950 govern price gouging at the federal level.
 
 ---
 
