@@ -21,6 +21,7 @@ const { ChartOfAccounts,
         error
     } = require("@pingleware/bestbooks-core");
 
+
 async function createAccount(name,type) {
     try {
         const coa = new ChartOfAccounts();
@@ -2186,4 +2187,5 @@ module.exports = {
     pendingPurchase,
     pendingPurchaseCleared,
     pendingPurchaseSettled,
+    DynamicPricing: require('./pricing'),
 }

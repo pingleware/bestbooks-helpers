@@ -50,6 +50,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * distribution
 * dividendDeclared
 * dividendPaid
+* DynamicPricing
 * editJournalTransaction
 * editTransaction
 * encumber

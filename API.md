@@ -498,6 +498,123 @@ Cash Dividend Paid: Debit -> Dividends Payable (liability), Credit -> Cash (Asse
 | company_id   | Number | The company id, default: o                                         |
 | office_id    | Number | The office id, default: 0                                          |
 
+## DynamicPricing
+Is a class to calculate the DynamicPricing based on supply and demand with the inclusion of specialized industries of
+retail, saas, airling, gig and utility.
+
+constructor
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| basePrice   | Number | the base price                                                      |
+
+calculatePrice
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| industry    | String | the industry as defined: retail, saas, airline, gig, energy, general|
+| params      | Object | the params for each industry                                        |
+
+generalPricing
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| demand      | Number |                                                                     |
+| supply      | Number |                                                                     |
+| maxSupply   | Number |                                                                     |
+| sensitivity | Number | default: 0.5                                                        |
+
+retailPricing
+| Argument        | Type   | Comment                                                             |
+| --------------- | ------ | ------------------------------------------------------------------- |
+| demand          | Number |                                                                     |
+| supply          | Number |                                                                     |
+| maxSupply       | Number |                                                                     |
+| competitorPrice | Number |                                                                     |
+| sensitivity     | Number | default: 0.5                                                        |
+
+saasPricing
+| Argument        | Type   | Comment                                                             |
+| --------------- | ------ | ------------------------------------------------------------------- |
+| newUsers        | Number |                                                                     |
+| lostUsers       | Number |                                                                     |
+| totalUsers      | Number |                                                                     |
+| lifetimeValue   | Number |                                                                     |
+| acquisitionCost | Number |                                                                     |
+| sensitivity     | Number | default: 0.5                                                        |
+
+airlinePricing
+| Argument       | Type   | Comment                                                             |
+| -------------- | ------ | ------------------------------------------------------------------- |
+| seatsSold      | Number |                                                                     |
+| seatsAvailable | Number |                                                                     |
+| totalSeats     | Number |                                                                     |
+| timeLeft       | Number |                                                                     |
+| maxTime        | Number |                                                                     |
+| sensitivity    | Number | default: 0.5                                                        |
+
+gigPricing
+| Argument         | Type   | Comment                                                             |
+| ---------------- | ------ | ------------------------------------------------------------------- |
+| activeRequests   | Number |                                                                     |
+| availableWorkers | Number |                                                                     |
+| maxWorkers       | Number |                                                                     |
+| urgencyFactor    | Number | default: 1.2                                                        | 
+| sensitivity      | Number | default: 0.5                                                        |
+
+energyPricing
+| Argument            | Type   | Comment                                                             |
+| ------------------- | ------ | ------------------------------------------------------------------- |
+| demand              | Number |                                                                     |
+| supply              | Number |                                                                     |
+| maxSupply           | Number |                                                                     |
+| environmentalFactor | Number | default: 1.1                                                        | 
+| sensitivity         | Number | default: 0.5                                                        |
+
+In dynamic pricing models, **sensitivity**, **urgencyFactor**, and **environmentalFactor** are parameters that adjust pricing based on demand, urgency, and external conditions. Here’s what they mean and how they influence pricing:
+
+---
+
+### **1. Sensitivity (Price Elasticity Factor)**
+- **Definition**: This parameter controls how strongly the price responds to changes in supply and demand.  
+- **Range**: Usually between **0** (no effect) and **1** (high effect).  
+- **Impact**:  
+  - **Low sensitivity** (e.g., `0.1`) → Prices change **slowly** with demand fluctuations.  
+  - **High sensitivity** (e.g., `0.9`) → Prices **spike or drop significantly** based on supply-demand imbalances.  
+
+🔹 **Example Use Case**: Luxury goods have **low** sensitivity, while ride-sharing services during peak hours have **high** sensitivity.
+
+---
+
+### **2. Urgency Factor (Time Pressure)**
+- **Definition**: Represents the **urgency** of demand, adjusting prices based on how quickly an item or service is needed.  
+- **Range**: Between **0** (no urgency) and **1+** (extreme urgency).  
+- **Impact**:  
+  - **Low urgency** (e.g., `0.2`) → Minimal price changes.  
+  - **High urgency** (e.g., `1.5`) → Significant price hikes when demand is immediate (e.g., last-minute bookings).  
+
+🔹 **Example Use Case**:  
+- **Airline tickets**: Prices go up as departure nears.  
+- **Event tickets**: Last-minute purchases cost more.
+
+---
+
+### **3. Environmental Factor (External Conditions)**
+- **Definition**: Adjusts prices based on **external conditions** like inflation, seasonality, economic trends, or weather.  
+- **Range**: Between **0.5** (deflationary) and **1.5** (inflationary).  
+- **Impact**:  
+  - **< 1.0** → Prices drop due to favorable conditions (e.g., discounts in an economic downturn).  
+  - **> 1.0** → Prices rise due to external pressures (e.g., inflation, high energy costs, supply chain issues).  
+
+🔹 **Example Use Case**:  
+- **Grocery prices** increase due to supply chain disruptions.  
+- **Electricity prices** rise during extreme weather.
+
+---
+
+Each parameter adjusts the base price accordingly:  
+✅ **Sensitivity** determines **how much** prices change.  
+✅ **Urgency Factor** increases prices if demand is time-sensitive.  
+✅ **Environmental Factor** reflects **economic** and **seasonal** trends.
+
+
 ## editJournalTransaction
 | Argument    | Type   | Comment                                                             |
 | ----------- | ------ | ------------------------------------------------------------------- |
