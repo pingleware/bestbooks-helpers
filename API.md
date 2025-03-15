@@ -1285,6 +1285,34 @@ Receive: Cash (Asset) -> Debit (increase)
 | description | String | A description of the transaction                                    |
 | amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
 
+## uccLienNew
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+## uccLienAccruedInterest
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+## uccLienPaid
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+## uccLienWriteOff
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 ## unearnedRevenue
 
 Example 17: Unearned Revenue

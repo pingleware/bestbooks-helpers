@@ -101,6 +101,10 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * spendFundingAccount
 * stockDividend
 * stocksIssuedOtherThanCash
+* uccLienNew
+* uccLienAccruedInterest
+* uccLienPaid
+* uccLienWriteOff
 * unearnedRevenue
 * workingHours
 

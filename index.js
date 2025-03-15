@@ -2116,6 +2116,134 @@ async function apic(txdate, description, price, numberOfShares, parValue = 5, co
     shareholder.contribution(txdate,description,price,numberOfShares,user,parValue);
 }
 
+/**
+ * If a business files a **UCC lien** on another business for **unpaid revenue**, 
+ * it likely means the creditor (filing business) is trying to secure payment for money owed, 
+ * such as unpaid invoices or contractual obligations. 
+ * This situation is usually related to **accounts receivable** or a **breach of contract for revenue owed**.  
+ * 
+ * Bookkeeping Entries for the Creditor (Filing Business)
+ * If the business is owed revenue and has filed a UCC lien to secure the claim, it records the receivable:  
+ * 
+ * 1. Recording the Unpaid Revenue (Accounts Receivable)
+ *          Dr. Accounts Receivable         $50,000  
+ *              Cr. Revenue                   $50,000  
+ *
+ *      Dr. Accounts Receivable** → Recognizes the amount the other business owes.  
+ *      Cr. Revenue** → Recognizes the revenue earned but not received.  
+ *
+ * 2. Filing the UCC Lien (Securing the Debt)
+ * The lien itself is not a direct financial transaction but rather a legal claim. However, 
+ * to track the lien, the business may create a memo entry or an "Allowance for Doubtful Accounts" 
+ * if there's uncertainty about collection:  
+ *
+ *          Dr. Bad Debt Expense             $50,000  
+ *              Cr. Allowance for Doubtful Accounts  $50,000  
+ *
+ *      Dr. Bad Debt Expense** → Recognizes potential loss if the debt is uncollectible.  
+ *      Cr. Allowance for Doubtful Accounts** → Adjusts expected collectibility.  
+ */
+
+async function uccLienNew(txdate,description,amount,account="Account Receivables",uccNo,company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Asset");
+    coa.add("Revenue","Revenue");
+    coa.add("Bad Debt Expense","Expense");
+    coa.add("Allowance for Doubtful Accounts","ContraAsset");
+
+    const ar = new Asset(account);
+    const revenue = new Revenue("Revenue");
+    const badDebt = new Expense("Bad Debt Expense");
+    const allowance = new ContraAsset("Allowance for Doubtful Accounts");
+
+    description = `${description} UCC Lien No: ${uccNo}`;
+
+    revenue.decrease(txdate,description,amount,company_id,office_id);
+    ar.increase(txdate,description,amount,company_id,office_id);
+    badDebt.increase(txdate,description,amount,company_id,office_id);
+    allowance.increase(txdate,description,amount,company_id,office_id);
+}
+
+/**
+ * Accruing Interest on the Outstanding Debt
+ * If the lien allows interest to accrue (e.g., 10% annual interest), record the monthly interest earned:
+ *
+ *      Dr. Interest Receivable         $417  
+ *          Cr. Interest Income           $417  
+ * 
+ * (Assuming $50,000 × 10% ÷ 12 months = $417 per month)
+ *
+ *  Dr. Interest Receivable → Tracks interest due from the debtor.
+ *  Cr. Interest Income → Recognizes earned interest.
+ * 
+ *  Repeat this entry each month the debt remains unpaid.
+ */
+async function uccLienAccruedInterest(txdate,description,amount,account="Interest Receivable",interest=0,company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Asset");
+    coa.add("Interest Income","Revenue");
+
+    const ar = new Asset(account);
+    const interestIncome = new Revenue("Interest Income");
+
+    ar.increase(txdate,description,amount,company_id,office_id);
+    interestIncome.decrease(txdate,description,interest,company_id,office_id);
+}
+
+/**
+ * If the Debt is Paid After the Lien
+ * When the business receives payment, reverse the receivable and record cash:  
+ *
+ *      Dr. Cash                         $50,000  
+ *          Cr. Accounts Receivable         $50,000  
+ *
+ *  Dr. Cash** → Increases cash balance.  
+ *  Cr. Accounts Receivable** → Clears the debt from the books.  
+ */
+async function uccLienPaid(txdate,description,amount,interest=0,account="Account Receivable",uccNo,company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Asset");
+    coa.add("Cash","Asset");
+    coa.add("Interest Receivable","Asset");
+
+    const ar = new Asset(account);
+    const cash = new Asset("Cash");
+    const interestReceivable = new Asset("Interest Receivable");
+
+    description = `${description} UCC Lien No: ${uccNo}`;
+
+    ar.decrease(txdate,description,amount,company_id,office_id);
+    interestReceivable.decrease(txdate,description,interest,company_id,office_id);
+    cash.increase(txdate,description,amount,company_id,office_id);
+}
+
+/**
+ * If the Debt is Written Off
+ * If the debtor fails to pay and the lien does not result in collection:  
+ *
+ *      Dr. Allowance for Doubtful Accounts  $50,000  
+ *          Cr. Accounts Receivable         $50,000  
+ *
+ * Dr. Allowance for Doubtful Accounts** → Removes the expected bad debt.  
+ * Cr. Accounts Receivable** → Writes off the uncollectible balance.  
+ */
+async function uccLienWriteOff(txdate,description,amount,account="Account Receivable",uccNo,company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Asset");
+    coa.add("Allowance for Doubtful Accounts","ContraAsset");
+    coa.add("Interest Receivable","Asset");
+
+    const ar = new Asset(account);
+    const allowance = new ContraAsset("Allowance for Doubtful Accounts");
+    const interestReceivable = new Asset("Interest Receivable");
+
+    description = `${description} UCC Lien No: ${uccNo}`;
+
+    ar.decrease(txdate,description,amount,company_id,office_id);
+    interestReceivable.decrease(txdate,description,amount,company_id,office_id);
+    allowance.increase(txdate,description,amount,company_id,office_id);
+}
+
 
 module.exports = {
     createAccount,
@@ -2205,4 +2333,8 @@ module.exports = {
     pendingPurchaseSettled,
     DynamicPricing: require('./pricing'),
     apic,
+    uccLienNew,
+    uccLienAccruedInterest,
+    uccLienPaid,
+    uccLienWriteOff,
 }
