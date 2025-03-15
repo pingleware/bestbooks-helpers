@@ -221,6 +221,26 @@ The asset account called Cash, or the checking account, is unique in that it rou
 | company_id   | Number | The company id, default: o                                         |
 | office_id    | Number | The office id, default: 0                                          |
 
+## apic
+Additional Paid-In Capital (APIC):
+
+To calculate the Additional Paid-In Capital (APIC), we need to compute the difference between the price at 
+which the shares were sold and the par value of the shares. If the price is greater than the par value, 
+that difference multiplied by the number of shares will give the APIC amount.
+ 
+Here's how you can calculate and handle APIC in the contribution method:
+ 
+Formula for APIC:    APIC=(Price−Par Value)×Number of Shares
+
+| Argument        | Type   | Comment                                                             |
+| --------------- | ------ | ------------------------------------------------------------------- |
+| txdate          | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description     | String | A description of the transaction                                    |
+| price           | Number | The price per share                                                 |
+| numberOfShares  | Number | The number of shares beung purchased                                |
+| parValue        | Number | The par value of the shares                                         |
+| company_id      | Number | The company id, default: o                                          |
+| office_id       | Number | The office id, default: 0                                           |
 
 ## badDebt
 
