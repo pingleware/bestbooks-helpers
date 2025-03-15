@@ -2100,6 +2100,44 @@ async function pendingPurchaseSettled(txdate,description,amount,bank='Bank',comp
     pendingPurchaseCleared(txdate,description,amount,bank,company_id,office_id);
 }
 
+/**
+ * Additional Paid-In Capital (APIC):
+ * 
+ * To calculate the Additional Paid-In Capital (APIC), we need to compute the difference between the price at 
+ * which the shares were sold and the par value of the shares. If the price is greater than the par value, 
+ * that difference multiplied by the number of shares will give the APIC amount.
+ * 
+ * Here's how you can calculate and handle APIC in the contribution method:
+ * 
+ * Formula for APIC:    APIC=(Price−Par Value)×Number of Shares
+ */
+async function apic(txdate, description, price, account="Capital", numberOfShares, parValue = 5, company_id=0,office_id=0) {
+    let amount = Number(price * numberOfShares);  // Total amount paid by the investor
+    let apic = 0;  // Additional Paid-In Capital
+
+    var coa = new ChartOfAccounts();
+    coa.add("Cash","Cash");
+    coa.add(account,"Equity");
+
+    var capital = new Equity(account);
+    var cash = new Cash();
+
+    
+    // Check if price is greater than par value to calculate APIC
+    if (price > parValue) {
+        apic = (price - parValue) * numberOfShares;  // Calculate APIC
+        const parValueAmount = parValue * numberOfShares;  // Par value contribution
+
+        // Make entry in the Share Capital (par value) and APIC
+        await addCredit(capital, txdate, description, parValueAmount, company_id, office_id);  // Credit for par value
+    } else {
+        await addCredit(capital, txdate, description, amount, company_id, office_id);  // If no APIC, credit entire amount
+    }
+
+    // Debit cash for the total amount paid by the investor
+    return await addDebit(cash, txdate, description, amount, company_id, office_id);
+}
+
 
 module.exports = {
     createAccount,
@@ -2188,4 +2226,5 @@ module.exports = {
     pendingPurchaseCleared,
     pendingPurchaseSettled,
     DynamicPricing: require('./pricing'),
+    apic,
 }
