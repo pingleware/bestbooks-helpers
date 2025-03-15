@@ -41,6 +41,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * cashDividendDeclared
 * cashDividendPayable
 * cashPayment
+* cmrr
 * COGS
 * commissionPaid
 * commissionPayable
@@ -77,6 +78,9 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * isJournalInbalance
 * liability
 * loanPayment
+* mrr
+* mrrEarned
+* mrrReceived
 * paidInCapitalStock
 * payAssetsByCheck
 * payAssetsByCredit

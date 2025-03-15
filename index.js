@@ -2244,6 +2244,82 @@ async function uccLienWriteOff(txdate,description,amount,account="Account Receiv
     allowance.increase(txdate,description,amount,company_id,office_id);
 }
 
+/**
+ * MRR: Monthly Recurring Revenue
+ */
+async function mrr(txdate,description,amount,account="Unerned Revenue",company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Liability");
+    coa.add("Accounts Receivable","Asset");
+
+    const unearnedRevenue = new Liability(account);
+    const ar = new Asset("Accounts Receivable");
+    ar.decrease(txdate,description,amount,company_id,office_id);
+    unearnedRevenue.increase(txdate,description,amount,company_id,office_id);
+}
+
+async function mrrEarned(txdate,description,amount,account="Subscription Revenue",company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Revenue");
+    coa.add("Unearned Revenue","Liability");
+
+    const revenue = new Revenue(account);
+    const unearnedRevenue = new Liability("Unearned Revenue");
+    revenue.increase(txdate,description,amount,company_id,office_id);
+    unearnedRevenue.decrease(txdate,description,amount,company_id,office_id);
+}
+
+async function mrrReceived(txdate,description,amount,account="Accounts Receivable",company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Asset");
+    coa.add("Cash","Cash");
+
+    const cash = new Cash();
+    const ar = new Asset("Accounts Receivable");
+    ar.decrease(txdate,description,amount,company_id,office_id);
+    cash.increase(txdate,description,amount,company_id,office_id);
+}
+
+/**
+ * Recording CMRR (Committed Monthly Recurring Revenue)
+ * CMRR adjusts MRR by accounting for committed changes, including:
+ * 
+ * Expansions (Upsells)
+ * Contractions (Downgrades)
+ * Churn (Cancellations)
+ * 
+ * Scenario:
+ * A customer upgrades their subscription from $500 to $700 next month.
+ * Another customer cancels a $200 plan effective next month.
+ * Adjustment Entry for Future Revenue Commitment (CMRR Update):
+ * 
+ *      CMRR Adjustment (Off-Balance Sheet)   $200  
+ * 
+ * This adjustment does not impact financial statements immediately but helps forecast future revenue trends.
+ */
+
+async function cmrr(changes="Expansions",txdate,description,amount,account="Revenue",company_id=0,office_id=0) {
+    const coa = new ChartOfAccounts();
+    coa.add(account,"Revenue");
+
+    const revenue = new Revenue(account);
+
+    switch (changes) {
+        case "Expansions":
+            description = `${description} - Upsell`;
+            revenue.increase(txdate,description,amount,company_id,office_id);        
+            break;
+        case "Contractions":
+            description = `${description} - Downgrade`;
+            revenue.decrease(txdate,description,amount,company_id,office_id);
+            break;
+        case "Churn":
+            description = `${description} - Cancellation`;
+            revenue.decrease(txdate,description,amount,company_id,office_id);
+            break;
+    }
+}
+
 
 module.exports = {
     createAccount,
@@ -2337,4 +2413,8 @@ module.exports = {
     uccLienAccruedInterest,
     uccLienPaid,
     uccLienWriteOff,
+    mrr,
+    mrrEarned,
+    mrrReceived,
+    cmrr,
 }

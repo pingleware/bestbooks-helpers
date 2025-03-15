@@ -382,6 +382,19 @@ Credit Cash (decrease its balance)
 | company_id   | Number | The company id, default: o                                         |
 | office_id    | Number | The office id, default: 0                                          |
 
+## cmrr
+Committed Monthly Recurring Revenue
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| changes     | String | type of change: Expansions, Contractions, or Churn                  | 
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+| company_id   | Number | The company id, default: o                                         |
+| office_id    | Number | The office id, default: 0                                          |
+
+
 ## COGS
 
 Costs of Goods Sold
@@ -1012,6 +1025,36 @@ Credit Cash $540 (decreases its balance)
 | txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
 | description | String | A description of the transaction                                    |
 | amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+## mrr
+Monthly Recurring Revenue
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+
+## mrrEarned
+Monthly Recurring Revenue Earned
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
+
+## mrrReceived
+Monthly Recurring Revenue Payment Received
+
+| Argument    | Type   | Comment                                                             |
+| ----------- | ------ | ------------------------------------------------------------------- |
+| txdate      | String | the transaction date for the entry item in the format of YYYY-MM-DD |
+| description | String | A description of the transaction                                    |
+| amount      | Number | The amount of the transaction in 2-digit decimal format, #.##      |
+
 
 ## paidInCapitalStock
 | Argument    | Type   | Comment                                                             |
