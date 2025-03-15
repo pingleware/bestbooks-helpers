@@ -28,6 +28,7 @@ The helper functions (aka hooks under WordPress) provide simpler interaction wit
 * addTransaction
 * addTransactionSync
 * allocateFundingAccount
+* apic
 * asset
 * badDebt
 * bankfee
